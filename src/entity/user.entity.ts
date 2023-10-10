@@ -1,8 +1,10 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Company } from './company.entity';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from './base-entity.entity';
 
-export type Role = 'corporate' | 'individual';
+export enum Role {
+  CORPORATE = 'corporate',
+  INDIVIDUAL = 'individual',
+}
 
 @Entity('user')
 export class User extends BaseEntity {
