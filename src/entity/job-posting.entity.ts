@@ -21,12 +21,6 @@ export class JobPosting extends BaseEntity {
   jobPosition: string;
 
   @Column()
-  country: string;
-
-  @Column()
-  region: string;
-
-  @Column()
   reward: number;
 
   @Column()
