@@ -15,7 +15,7 @@ export class Company extends BaseEntity {
 
   @OneToOne(() => User)
   @JoinColumn({ name: 'manager_id' }) // NOTE: 외래키를 가진 쪽에만 작성
-  manager: string;
+  manager: User;
 
   // NOTE: 생략 가능함. 필요해지면 추가(양방향)
   // @OneToMany(() => JobPosting, (jobPosting) => jobPosting.company)
