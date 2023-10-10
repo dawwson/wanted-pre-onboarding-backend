@@ -26,6 +26,8 @@ import { AppController } from './app.controller';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         const dbConfig = configService.get('db');
+        const serverConfig = configService.get('server');
+
         return {
           type: dbConfig.type,
           host: dbConfig.host,
@@ -34,7 +36,8 @@ import { AppController } from './app.controller';
           password: dbConfig.password,
           database: dbConfig.database,
           entities: [path.join(__dirname, '**', '*.entity.{ts,js}')],
-          synchronize: true, // NOTE: 개발 환경에서만 사용(추후 마이그레이션으로 테이블 생성해야 됨)
+          synchronize: serverConfig.nodeEnv === 'development', // NOTE: 추후 마이그레이션으로 테이블 생성
+          logging: serverConfig.nodeEnv === 'development',
         };
       },
     }),
