@@ -4,13 +4,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import * as path from 'path';
 
 import { AppController } from './app.controller';
-import databaseConfig from './config/database.config';
+import dbConfig from './config/db.config';
 import serverConfig from './config/server.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [databaseConfig, serverConfig],
+      load: [dbConfig, serverConfig],
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
@@ -18,12 +18,12 @@ import serverConfig from './config/server.config';
       useFactory: (configService: ConfigService) => {
         const dbConfig = configService.get('db');
         return {
-          type: dbConfig.dialect,
+          type: dbConfig.type,
           host: dbConfig.host,
           port: dbConfig.port,
           username: dbConfig.username,
           password: dbConfig.password,
-          database: dbConfig.name,
+          database: dbConfig.database,
           entities: [path.join(__dirname, '**', '*.entity.{ts,js}')],
           synchronize: true, // NOTE: 개발 환경에서만 사용
         };
