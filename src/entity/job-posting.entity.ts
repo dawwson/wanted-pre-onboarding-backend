@@ -15,7 +15,7 @@ export class JobPosting extends BaseEntity {
 
   @ManyToOne(() => Company)
   @JoinColumn({ name: 'company_id' })
-  company!: Company;
+  company: Company;
 
   @Column({ name: 'job_position' })
   jobPosition: string;
