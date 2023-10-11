@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Req, Patch, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  Patch,
+  Param,
+  Delete,
+  HttpCode,
+} from '@nestjs/common';
 
 import { Roles } from '../common/guard/roles.decorator';
 import { RequestWithUser } from '../common/interface/request.interface';
@@ -46,6 +55,14 @@ export class JobPostingController {
     };
   }
 
+  @Delete(':id')
+  @Roles([Role.CORPORATE])
+  @HttpCode(204)
+  async removeJobPosting(@Req() req: RequestWithUser, @Param('id') id: string) {
+    await this.userService.checkCanDeleteJobPosting(req.user, +id);
+    await this.jobPostingService.remove(+id);
+  }
+
   /*
   @Get()
   findAll() {
@@ -55,11 +72,6 @@ export class JobPostingController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.jobPostingService.findOne(+id);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.jobPostingService.remove(+id);
   }
  */
 }

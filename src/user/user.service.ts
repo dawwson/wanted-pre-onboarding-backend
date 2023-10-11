@@ -19,6 +19,7 @@ export class UserService {
     return this.userRepository.findById(id);
   }
 
+  // TODO: Guard로 리팩터
   async checkCanUpdateJobPosting(user, jobPostingId) {
     const jobPosting = await this.jobPostingRepository.findOneBy(jobPostingId);
 
@@ -30,7 +31,18 @@ export class UserService {
     if ((await user.company).id !== (await jobPosting.company).id) {
       throw new ForbiddenException('접근할 수 없는 채용공고 입니다.');
     }
+  }
 
-    return;
+  async checkCanDeleteJobPosting(user, jobPostingId) {
+    const jobPosting = await this.jobPostingRepository.findOneBy(jobPostingId);
+
+    if (!jobPosting) {
+      throw new NotFoundException('채용공고가 존재하지 않습니다.');
+    }
+
+    // NOTE: lazy loading으로 인해 company 호출시 promise로 반환됨
+    if ((await user.company).id !== (await jobPosting.company).id) {
+      throw new ForbiddenException('접근할 수 없는 채용공고 입니다.');
+    }
   }
 }

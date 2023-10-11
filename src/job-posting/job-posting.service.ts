@@ -7,6 +7,7 @@ import { CompanyRepository } from '../repository/company.repository';
 import { PostJobPostingDto } from './dto/post-job-posting.dto';
 import { PatchJobPostingDto } from './dto/patch-job-posting.dto';
 import { UpdateResultDto } from './service-dto/update-result.dto';
+import { DeleteResultDto } from './service-dto/delete-result.dto';
 
 @Injectable()
 export class JobPostingService {
@@ -46,6 +47,11 @@ export class JobPostingService {
     return new UpdateResultDto(updateResult.affected);
   }
 
+  async remove(id: number): Promise<DeleteResultDto> {
+    const deleteResult = await this.jobPostingRepository.delete(id);
+    return new DeleteResultDto(deleteResult.affected);
+  }
+
   /*
   findAll() {
     return `This action returns all jobPosting`;
@@ -53,10 +59,6 @@ export class JobPostingService {
 
   findOne(id: number) {
     return `This action returns a #${id} jobPosting`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} jobPosting`;
   }
  */
 }
