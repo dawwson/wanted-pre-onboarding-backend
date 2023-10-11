@@ -74,18 +74,20 @@ Test : 테스트 코드 추가 및 수정
 |500<br/>Internal Server Error|	요청을 처리하는 과정에서 서버가 예상하지 못한 상황에 놓였다는 것을 나타냅니다.|
 
 ### 오류 응답 형식
-|Name|Type|Description|
-|--|--|--|
-|code|string|서버 에러 코드|
-|message|string|에러 내용|
-|instance|string|에러 발생 근원지 URI|
+| Name       | Type   | Description |
+|------------|--------|------------|
+| message    | string | 에러 메세지     |
+| error      | string or string[ ] | 에러 내용      |
+| statusCode | string | HTTP 상태 코드 |
 
 #### 예시
   ```json
   {
-    "code": "",
-    "message": "",
-    "instance": ""
+  "message": [
+    "reward must be a number conforming to the specified constraints"
+  ],
+  "error": "Bad Request",
+  "statusCode": 400
   }
   ```
 <br>
@@ -99,18 +101,18 @@ Test : 테스트 코드 추가 및 수정
 **Request URL**
 ```
 POST /job-posting
-Authorization: role=corporate
+Authorization: userId=1
 Content-Type: application/json
 ```
 
 **Request Body**  
 
-| Name       |  Type  | Description | Required |  
-|------------|:------:|-------------|:--------:|
-| jobPosition| string | 채용 포지션      |    O     |
-|reward| number | 채용 보상금|O|
-|description| string | 채용 공고 내용 |O|
-|skill| string |사용 기술|O|
+| Name       |  Type  | Description   | Required |  
+|------------|:------:|---------------|:--------:|
+| jobPosition| string | 채용 포지션        |    O     |
+|reward| number | 채용 보상금(단위: 원) |O|
+|description| string | 채용 공고 내용      |O|
+|skill| string | 사용 기술         |O|
 
 **Response Body**
 
@@ -135,7 +137,9 @@ Content-Type: application/json
 #### 4. 채용공고 목록 조회
 #### 1. 채용공고 등록
 
-### 채용 공고 API
+### XXX API
+
+## 코드 아키텍처 설계
 
 
 ### 테스트
