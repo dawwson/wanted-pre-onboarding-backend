@@ -1,16 +1,24 @@
-import { Controller, Post, Body, Req } from '@nestjs/common';
-import { JobPostingService } from './job-posting.service';
-import { PostJobPostingDto } from './dto/post-job-posting.dto';
+import { Controller, Post, Body, Req, Patch, Param } from '@nestjs/common';
+
 import { Roles } from '../common/guard/roles.decorator';
 import { RequestWithUser } from '../common/interface/request.interface';
 import { Role } from '../entity/user.entity';
 
+import { UserService } from '../user/user.service';
+import { JobPostingService } from './job-posting.service';
+
+import { PostJobPostingDto } from './dto/post-job-posting.dto';
+import { PatchJobPostingDto } from './dto/patch-job-posting.dto';
+
 @Controller('job-postings')
 export class JobPostingController {
-  constructor(private readonly jobPostingService: JobPostingService) {}
+  constructor(
+    private readonly jobPostingService: JobPostingService,
+    private readonly userService: UserService,
+  ) {}
 
   @Post()
-  @Roles([Role.CORPORATE]) //
+  @Roles([Role.CORPORATE])
   async registerJobPosting(
     @Req() req: RequestWithUser,
     @Body() postJobPostingDto: PostJobPostingDto,
@@ -21,6 +29,18 @@ export class JobPostingController {
     );
     return { id: newJobPosting.id }; // TODO: Response 타입 지정
   }
+
+  @Patch(':id')
+  @Roles([Role.CORPORATE])
+  async updateJobPosting(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Body() patchJobPostingDto: PatchJobPostingDto,
+  ) {
+    await this.userService.checkCanUpdateJobPosting(req.user, +id);
+    return this.jobPostingService.update(+id, patchJobPostingDto);
+  }
+
   /*
   @Get()
   findAll() {
@@ -30,11 +50,6 @@ export class JobPostingController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.jobPostingService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateJobPostingDto: UpdateJobPostingDto) {
-    return this.jobPostingService.update(+id, updateJobPostingDto);
   }
 
   @Delete(':id')
