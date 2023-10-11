@@ -1,28 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+
+import { JobPosting } from '../entity/job-posting.entity';
+import { JobPostingRepository } from '../repository/job-posting.repository';
+import { CompanyRepository } from '../repository/company.repository';
 
 import { PostJobPostingDto } from './dto/post-job-posting.dto';
-import { JobPosting } from '../entity/job-posting.entity';
-import { Company } from '../entity/company.entity';
 
 @Injectable()
 export class JobPostingService {
   constructor(
-    @InjectRepository(JobPosting)
-    private readonly jobPostingRepository: Repository<JobPosting>,
-    @InjectRepository(Company)
-    private readonly companyRepository: Repository<Company>,
+    private readonly jobPostingRepository: JobPostingRepository,
+    private readonly companyRepository: CompanyRepository,
   ) {}
 
   // TODO: postJobPostingDto에서 서비스용 다른 dto로 변환해야할지 고민됨...
-  async register(
-    userId: number,
-    postJobPostingDto: PostJobPostingDto,
-  ): Promise<JobPosting> {
-    const company = await this.companyRepository.findOneBy({
-      manager: { id: userId },
-    });
+  async register(userId: number, postJobPostingDto: PostJobPostingDto) {
+    const company = await this.companyRepository.findByManagerId(userId);
 
     // TODO: 채용포지션 중복검사?
     // TODO: 엔티티 안으로 비즈니스 로직 넣어서 리팩터
