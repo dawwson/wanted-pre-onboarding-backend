@@ -13,7 +13,7 @@ export class JobPosting extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Company)
+  @ManyToOne(() => Company, { lazy: true })
   @JoinColumn({ name: 'company_id' })
   company: Company;
 

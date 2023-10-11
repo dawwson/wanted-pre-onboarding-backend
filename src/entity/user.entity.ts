@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from './base-entity.entity';
+import { Company } from './company.entity';
 
 export enum Role {
   CORPORATE = 'corporate',
@@ -11,9 +12,8 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // NOTE: 생략 가능함. 필요해지면 추가(양방향)
-  // @OneToOne(() => Company, (company) => company.manager)
-  // company: Company;
+  @OneToOne(() => Company, (company) => company.manager, { lazy: true })
+  company: Company;
 
   @Column()
   email: string;
