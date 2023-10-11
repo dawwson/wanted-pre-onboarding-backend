@@ -45,8 +45,8 @@ Test : 테스트 코드 추가 및 수정
 ## 🌳 요구사항 분석 및 구현과정
 ### 📝 요구사항 분석
 #### 1. 기능 목록
-- [ ] 채용공고 등록(기업회원 only)
-- [ ] 채용공고 수정(기업회원 only)
+- [X] 채용공고 등록(기업회원 only)
+- [X] 채용공고 수정(기업회원 only)
 - [ ] 채용공고 삭제(기업회원 only)
 - [ ] 채용공고 목록 조회
   - [ ] 채용공고 검색 ~~(선택사항 & 가산점)~~
@@ -113,8 +113,8 @@ Test : 테스트 코드 추가 및 수정
 
 <br>
 
-### 1. 채용공고 등록
-- 채용공고를 등록한다.`기업회원 only`
+### 1. 채용공고 등록 `기업회원 only`
+- 채용공고를 등록한다.
 
 **Request URL**
 - `Authorization` 헤더에 회원 `DB Id`를 담아서 보낸다.
@@ -158,8 +158,8 @@ Content-Type: application/json
 
 <br>
 
-### 2. 채용공고 수정
-- 채용 공고를 수정한다.`기업회원 only`
+### 2. 채용공고 수정 `기업회원 only`
+- 채용 공고를 수정한다.
 
 **Request URL**
 - `Authorization` 헤더에 회원 `DB Id`를 담아서 보낸다.
@@ -208,8 +208,8 @@ Content-Type: application/json
 
 <br>
 
-### 3. 채용공고 삭제
-- 채용 공고를 삭제한다.`기업회원 only`
+### 3. 채용공고 삭제 `기업회원 only`
+- 채용 공고를 삭제한다.
 
 **Request URL**
 - `Authorization` 헤더에 회원 `DB Id`를 담아서 보낸다.
@@ -248,9 +248,9 @@ Authorization: userId={사용자 DB Id}
 
 **Request Query Parameter**
 
-| Name   | Description |Required|
-|--------|-----------|:--:|
-| search | 검색 내용     |O|
+| Name   | Description | Required |
+|--------|-----------|:--------:|
+| search | 검색 내용     |    X     |
 
 **Response Body(Array)**
 
@@ -294,8 +294,68 @@ Content-Type: application/json
 
 <br>
 
-### 5. 지원하기
-- 채용 공고에 지원한다.`개인회원 only`
+### 5. 채용공고 상세 조회
+- 회사가 올린 다른 채용공고를 포함하여 채용공고를 상세 조회한다.
+
+**Request URL**
+- `Authorization` 헤더에 회원 `DB Id`를 담아서 보낸다.
+```
+GET /job-postings/{id}
+Authorization: userId={사용자 DB Id}
+```
+
+**Request Path Variable**
+
+|Name| Description     |Required|
+|--|-----------------|:--:|
+|id| 삭제할 채용 공고 DB Id |O|
+
+**Response Body**
+
+| Name           |   Type    | Description                 |Required|  
+|----------------|:---------:|-----------------------------|:--:|
+| id             |  number   | 채용공고 DB Id                  |O|
+| companyName    |  string   | 회사 이름                       |O|
+| companyCountry |  string   | 회사 국가                       |O|
+| companyRegion  |  string   | 회사 지역                       |O|
+| jobPostion     |  string   | 채용 포지션                      |O|
+| description    |  string   | 채용공고 내용                     |O|
+| reward         |  number   | 채용 보상금                      |O|
+| skill          |  string   | 사용 기술                       |O|
+| jobPostings    | number[ ] | 해당 회사가 올린 다른 채용공고 `DB Id` 리스트 |O|
+
+**Response Body 예시**
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "message": "지원내역이 성공적으로 등록되었습니다.",
+  "data": [
+    {
+      "id": 123,
+      "companyName": "원티드",
+      "companyCountry": "한국",
+      "companyRegion": "서울",
+      "jobPositon": "백엔드 개발자",
+      "descripton": "채용 웹 서비스를 개발합니다.",
+      "reward": 1000000,
+      "skill": "Node.js",
+      "jobPostings": [123, 124, 125]
+    },
+    {...}
+  ]
+}
+```
+
+<br>
+
+---
+
+<br>
+
+### 6. 지원하기 `개인회원 only`
+- 채용 공고에 지원한다.
 
 **Request URL**
 - Authorization 헤더에 사용자의 DB Id를 담아서 보낸다.
