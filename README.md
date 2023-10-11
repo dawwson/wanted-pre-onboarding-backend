@@ -49,9 +49,9 @@ Test : 테스트 코드 추가 및 수정
 - [ ] 채용공고 수정(기업회원 only)
 - [ ] 채용공고 삭제(기업회원 only)
 - [ ] 채용공고 목록 조회
-- [ ] 채용공고 검색 ~~(선택사항 & 가산점)~~
+  - [ ] 채용공고 검색 ~~(선택사항 & 가산점)~~
 - [ ] 채용공고 상세 조회 
-  - 해당 회사가 올린 다른 채용공고 포함 ~~(선택사항 & 가산점)~~
+  - [ ] 해당 회사가 올린 다른 채용공고 포함 ~~(선택사항 & 가산점)~~
 - [ ] 채용공고 지원(일반회원 only) ~~(선택사항 & 가산점)~~
 #### 2. 도메인 모델 설계
 - 기업회원은 여러 개의 채용 공고를 등록할 수 있다.
@@ -64,14 +64,31 @@ Test : 테스트 코드 추가 및 수정
 
 ## 📝 REST API 설계(작성중...)
 ### 주요 상태 코드
-|      **HTTP 상태코드**       |**설명**|
-|:--------------------:|-|
-|      200<br/>OK      |서버가 클라이언트의 요청을 성공적으로 수행하였음을 의미합니다.|
-|   201<br/>Created    |서버가 클라이언트의 요청을 성공적으로 수행 후 리소스가 생성되었음을 의미합니다.|
-| 400<br/>Bad Request  |서버가 클라이언트 오류(잘못된 요청 구문 등)를 감지해 요청을 처리할 수 없거나, 하지 않는다는 것을 의미합니다.|
-| 401<br/>Unauthorized |클라이언트 오류 상태 응답 코드는 해당 리소스에 유효한 인증 자격 증명이 없기 때문에 요청이 수행되지 않았음을 나타냅니다.|
-|  403<br/>Forbidden   |서버에 요청이 전달되었지만, 권한 때문에 거절되었음을 의미합니다.|
-|500<br/>Internal Server Error|	요청을 처리하는 과정에서 서버가 예상하지 못한 상황에 놓였다는 것을 나타냅니다.|
+|         **HTTP 상태코드**         | **설명**                                                               |
+|:-----------------------------:|----------------------------------------------------------------------|
+|          200<br/>OK           | 서버가 클라이언트의 요청을 성공적으로 수행하였음을 의미합니다.                                   |
+|        201<br/>Created        | 서버가 클라이언트의 요청을 성공적으로 수행 후 리소스가 생성되었음을 의미합니다.                         |
+|      204<br/>No Content       | 서버가 성공적으로 리소스를 삭제하였으며, 응답 바디가 없음을 나타냅니다.                             |
+|      400<br/>Bad Request      | 서버가 클라이언트 오류(잘못된 요청 구문 등)를 감지해 요청을 처리할 수 없거나, 하지 않는다는 것을 의미합니다.      |
+|     401<br/>Unauthorized      | 클라이언트 오류 상태 응답 코드는 해당 리소스에 유효한 인증 자격 증명이 없기 때문에 요청이 수행되지 않았음을 나타냅니다. |
+|       403<br/>Forbidden       | 서버에 요청이 전달되었지만, 권한 때문에 거절되었음을 의미합니다.                                 |
+| 500<br/>Internal Server Error | 	요청을 처리하는 과정에서 서버가 예상하지 못한 상황에 놓였다는 것을 나타냅니다.                        |
+
+### 성공 응답 형식
+| Name       | Type                | Description   |
+|------------|---------------------|---------------|
+|message| string              | 성공 메세지        |
+|data| object or object[ ] | 요청에 대한 반환 데이터 |
+
+#### 예시
+```json
+{
+  "message": "자원이 성공적으로 등록되었습니다.",
+  "data": {
+    "id": 123
+  }
+}
+```
 
 ### 오류 응답 형식
 | Name       | Type   | Description |
@@ -81,38 +98,40 @@ Test : 테스트 코드 추가 및 수정
 | statusCode | string | HTTP 상태 코드 |
 
 #### 예시
-  ```json
-  {
+```json
+{
   "message": [
     "reward must be a number conforming to the specified constraints"
   ],
   "error": "Bad Request",
   "statusCode": 400
-  }
-  ```
+}
+```
 <br>
 
 ---
 
-### 채용 공고 API
-#### 1. 채용공고 등록
-- 채용공고를 등록한다(기업회원 only).
+<br>
+
+### 1. 채용공고 등록
+- 채용공고를 등록한다.`기업회원 only`
 
 **Request URL**
+- `Authorization` 헤더에 회원 `DB Id`를 담아서 보낸다.
 ```
-POST /job-posting
-Authorization: userId=1
+POST /job-postings
+Authorization: userId={회원 DB Id}
 Content-Type: application/json
 ```
 
-**Request Body**  
+**Request Body**
 
-| Name       |  Type  | Description   | Required |  
-|------------|:------:|---------------|:--------:|
-| jobPosition| string | 채용 포지션        |    O     |
-|reward| number | 채용 보상금(단위: 원) |O|
-|description| string | 채용 공고 내용      |O|
-|skill| string | 사용 기술         |O|
+| Name |  Type  | Description | Required |
+|------------|:------:|-------|:--------:|
+| jobPosition| string | 채용 포지션 |    O     |
+|description| string | 채용 공고 내용 |    O     |
+|reward| number | 채용 보상금(단위: 원) |    O     |
+|skill| string | 사용 기술 |    O     |
 
 **Response Body**
 
@@ -120,29 +139,205 @@ Content-Type: application/json
 |------|:------:|----------------|:--------:|  
 | id   | number | 생성된 채용공고 DB Id |    O     |
 
-
 **Response Body 예시**
 ```
 HTTP/1.1 201 Created
 Content-Type: application/json
 
 {
-  "id": 10
+  "message": "채용공고가 성공적으로 등록되었습니다.",
+  "data": {
+    "id": 123
+  }
 }
 ```
 
+<br>
 
-#### 2. 채용공고 수정
-#### 3. 채용공고 삭제
-#### 4. 채용공고 목록 조회
-#### 1. 채용공고 등록
+---
 
-### XXX API
+<br>
+
+### 2. 채용공고 수정
+- 채용 공고를 수정한다.`기업회원 only`
+
+**Request URL**
+- `Authorization` 헤더에 회원 `DB Id`를 담아서 보낸다.
+```
+POST /job-postings/{id}
+Authorization: userId={사용자 DB Id}
+Content-Type: application/json
+```
+
+**Request Path Variable**
+
+|Name| Description     |Required|
+|--|-----------------|:--:|
+|id| 수정할 채용 공고 DB Id |O|
+
+**Request Body**
+
+|Name|Type| Description       | Required |
+|------------|:------:|-------------------|:--------:|
+| jobPosition| string | 수정할 채용 포지션        |    X     |
+|description| string | 수정할 채용 공고 내용      |    X     |
+|reward| number | 수정할 채용 보상금(단위: 원) |    X     |
+|skill| string | 수정할 사용 기술         |    X     |
+
+**Response Body**
+|Name|Type|Description|Required|  
+|--|:--:|--|:--:|
+|id|number|수정된 채용공고 DB Id|O|
+
+**Response Body 예시**
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "message": "채용공고가 성공적으로 업데이트 되었습니다.",
+  "data": {
+    "id": 123
+  }
+}
+```
+
+<br>
+
+---
+
+<br>
+
+### 3. 채용공고 삭제
+- 채용 공고를 삭제한다.`기업회원 only`
+
+**Request URL**
+- `Authorization` 헤더에 회원 `DB Id`를 담아서 보낸다.
+```
+DELETE /job-postings/{id}
+Authorization: userId={사용자 DB Id}
+```
+
+**Request Path Variable**
+
+|Name| Description     |Required|
+|--|-----------------|:--:|
+|id| 삭제할 채용 공고 DB Id |O|
+
+**Response Body**
+```
+HTTP/1.1 204 No Content
+```
+
+<br>
+
+---
+
+<br>
+
+### 4. 채용공고 목록 조회 및 검색
+- 채용 공고를 조회하거나 검색한다.
+
+**Request URL**
+- `Authorization` 헤더에 회원 `DB Id`를 담아서 보낸다.
+- 모든 목록을 조회할 경우 `Query parameter`를 포함시키지 않는다.
+```
+GET /job-postings?search={검색_내용}
+Authorization: userId={사용자 DB Id}
+```
+
+**Request Query Parameter**
+
+| Name   | Description |Required|
+|--------|-----------|:--:|
+| search | 검색 내용     |O|
+
+**Response Body(Array)**
+
+| Name           |  Type  | Description |Required|  
+|----------------|:------:|-------------|:--:|
+| id             | number | 채용공고 DB Id  |O|
+| companyName    | string | 회사 이름       |O|
+| companyCountry | string | 회사 국가       |O|
+| companyRegion  | string | 회사 지역       |O|
+| jobPostion     | string | 채용 포지션      |O|
+| description    | string | 채용공고 내용     |O|
+| reward         | number | 채용 보상금      |O|
+| skill          | string | 사용 기술       |O|
+
+**Response Body 예시**
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "message": "지원내역이 성공적으로 등록되었습니다.",
+  "data": [
+    {
+      "id": 123,
+      "companyName": "원티드",
+      "companyCountry": "한국",
+      "companyRegion": "서울",
+      "jobPositon": "백엔드 개발자",
+      "descripton": "채용 웹 서비스를 개발합니다.",
+      "reward": 1000000,
+      "skill": "Node.js"
+    },
+    {...}
+  ]
+}
+```
+
+<br>
+
+---
+
+<br>
+
+### 5. 지원하기
+- 채용 공고에 지원한다.`개인회원 only`
+
+**Request URL**
+- Authorization 헤더에 사용자의 DB Id를 담아서 보낸다.
+```
+POST /job-applications
+Authorization: userId={사용자 DB Id}
+Content-Type: application/json
+```
+
+**Request Body**
+
+| Name         |  Type  | Description       | Required |
+|--------------|:------:|-------------------|:--------:|
+| jobPostingId | number | 지원할 채용 공고 DB Id   |    O     |
+
+**Response Body**
+
+|Name|Type| Description |Required|  
+|--|:--:|-------------|:--:|
+|id|number| 지원내역 DB Id  |O|
+
+**Response Body 예시**
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "message": "지원내역이 성공적으로 등록되었습니다.",
+  "data": {
+    "id": 123
+  }
+}
+```
+
+<br>
+
+---
 
 ## 코드 아키텍처 설계
 
 
-### 테스트
+## 테스트
 
 
 |Name|Type|Description|Required|  
