@@ -38,7 +38,12 @@ export class JobPostingController {
     @Body() patchJobPostingDto: PatchJobPostingDto,
   ) {
     await this.userService.checkCanUpdateJobPosting(req.user, +id);
-    return this.jobPostingService.update(+id, patchJobPostingDto);
+    await this.jobPostingService.update(+id, patchJobPostingDto);
+
+    return {
+      message: '채용공고가 성공적으로 업데이트 되었습니다.',
+      data: { id },
+    };
   }
 
   /*

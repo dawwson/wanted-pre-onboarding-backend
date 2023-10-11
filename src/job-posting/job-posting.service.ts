@@ -5,6 +5,8 @@ import { JobPostingRepository } from '../repository/job-posting.repository';
 import { CompanyRepository } from '../repository/company.repository';
 
 import { PostJobPostingDto } from './dto/post-job-posting.dto';
+import { PatchJobPostingDto } from './dto/patch-job-posting.dto';
+import { UpdateResultDto } from './service-dto/update-result.dto';
 
 @Injectable()
 export class JobPostingService {
@@ -14,7 +16,10 @@ export class JobPostingService {
   ) {}
 
   // TODO: postJobPostingDto에서 서비스용 다른 dto로 변환해야할지 고민됨...
-  async register(userId: number, postJobPostingDto: PostJobPostingDto) {
+  async register(
+    userId: number,
+    postJobPostingDto: PostJobPostingDto,
+  ): Promise<JobPosting> {
     const company = await this.companyRepository.findByManagerId(userId);
 
     // TODO: 채용포지션 중복검사?
@@ -28,6 +33,19 @@ export class JobPostingService {
 
     return this.jobPostingRepository.save(jobPostingToSave);
   }
+
+  async update(
+    id: number,
+    patchJobPostingDto: PatchJobPostingDto,
+  ): Promise<UpdateResultDto> {
+    const updateResult = await this.jobPostingRepository.update(
+      id,
+      patchJobPostingDto,
+    );
+
+    return new UpdateResultDto(updateResult.affected);
+  }
+
   /*
   findAll() {
     return `This action returns all jobPosting`;
@@ -35,10 +53,6 @@ export class JobPostingService {
 
   findOne(id: number) {
     return `This action returns a #${id} jobPosting`;
-  }
-
-  update(id: number, updateJobPostingDto: UpdateJobPostingDto) {
-    return `This action updates a #${id} jobPosting`;
   }
 
   remove(id: number) {
