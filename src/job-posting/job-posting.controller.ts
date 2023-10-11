@@ -16,8 +16,8 @@ import { Role } from '../entity/user.entity';
 import { UserService } from '../user/user.service';
 import { JobPostingService } from './job-posting.service';
 
-import { PostJobPostingDto } from './dto/post-job-posting.dto';
-import { PatchJobPostingDto } from './dto/patch-job-posting.dto';
+import { PostJobPostingDto } from './controller-dto/post-job-posting.dto';
+import { PatchJobPostingDto } from './controller-dto/patch-job-posting.dto';
 
 @Controller('job-postings')
 export class JobPostingController {

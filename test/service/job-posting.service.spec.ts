@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { JobPostingRepository } from '../../src/repository/job-posting.repository';
 import { CompanyRepository } from '../../src/repository/company.repository';
 
-import { PostJobPostingDto } from '../../src/job-posting/dto/post-job-posting.dto';
+import { PostJobPostingDto } from '../../src/job-posting/controller-dto/post-job-posting.dto';
 import { JobPosting } from '../../src/entity/job-posting.entity';
 import { Company } from '../../src/entity/company.entity';
 
