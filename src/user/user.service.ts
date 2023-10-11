@@ -3,22 +3,20 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 import { User } from '../entity/user.entity';
 import { JobPostingRepository } from '../repository/job-posting.repository';
+import { UserRepository } from '../repository/user.repository';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>, // TODO: 커스텀 레파지토리로 분리
+    private readonly userRepository: UserRepository,
     private readonly jobPostingRepository: JobPostingRepository,
   ) {}
 
   getUser(id: number): Promise<User> {
-    return this.userRepository.findOneBy({ id });
+    return this.userRepository.findById(id);
   }
 
   async checkCanUpdateJobPosting(user, jobPostingId) {
