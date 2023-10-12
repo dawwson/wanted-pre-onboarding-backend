@@ -45,14 +45,14 @@ Test : 테스트 코드 추가 및 수정
 ## 🌳 요구사항 분석 및 구현과정
 ### 📝 요구사항 분석
 #### 1. 기능 목록
-- [X] 채용공고 등록(기업회원 only)
-- [X] 채용공고 수정(기업회원 only)
-- [ ] 채용공고 삭제(기업회원 only)
-- [ ] 채용공고 목록 조회
-  - [ ] 채용공고 검색 ~~(선택사항 & 가산점)~~
+- [X] 채용공고 등록 `기업회원 only`
+- [X] 채용공고 수정 `기업회원 only`
+- [X] 채용공고 삭제 `기업회원 only`
+- [X] 채용공고 목록 조회
+  - [X] 채용공고 검색 ~~(선택사항 & 가산점)~~
 - [ ] 채용공고 상세 조회 
   - [ ] 해당 회사가 올린 다른 채용공고 포함 ~~(선택사항 & 가산점)~~
-- [ ] 채용공고 지원(일반회원 only) ~~(선택사항 & 가산점)~~
+- [ ] 채용공고 지원 `일반회원 only` ~~(선택사항 & 가산점)~~
 #### 2. 도메인 모델 설계
 - 기업회원은 여러 개의 채용 공고를 등록할 수 있다.
 - 기업회원은 등록한 채용공고를 수정, 삭제할 수 있다.
@@ -74,11 +74,12 @@ Test : 테스트 코드 추가 및 수정
 |       403<br/>Forbidden       | 서버에 요청이 전달되었지만, 권한 때문에 거절되었음을 의미합니다.                                 |
 | 500<br/>Internal Server Error | 	요청을 처리하는 과정에서 서버가 예상하지 못한 상황에 놓였다는 것을 나타냅니다.                        |
 
-### 성공 응답 형식
-| Name    | Type            | Description   |
-|---------|-----------------|---------------|
-| message | string          | 성공 메세지        |
-| 자원이름    | json or json[ ] | 요청에 대한 반환 데이터 |
+### 일반적인 성공 응답 형식
+- 예외적인 케이스도 있으니, 자세한 내용은 각 API에서 확인 가능
+| Name    | Type            | Description             |
+|---------|-----------------|-------------------------|
+| message | string          | 성공 메세지                  |
+| 자원이름    | json or json[ ] | 요청에 대한 반환 데이터(없으면 빈 배열) |
 
 #### 예시
 ```json
@@ -113,8 +114,8 @@ Test : 테스트 코드 추가 및 수정
 
 <br>
 
-### 1. 채용공고 등록 `기업회원 only`
-- 채용공고를 등록한다.
+### 1. 채용공고 등록 
+- 채용공고를 등록한다. `기업회원 only`
 
 **Request URL**
 - `Authorization` 헤더에 회원 `DB Id`를 담아서 보낸다.
@@ -158,8 +159,8 @@ Content-Type: application/json
 
 <br>
 
-### 2. 채용공고 수정 `기업회원 only`
-- 채용 공고를 수정한다.
+### 2. 채용공고 수정 
+- 채용 공고를 수정한다. `기업회원 only`
 
 **Request URL**
 - `Authorization` 헤더에 회원 `DB Id`를 담아서 보낸다.
@@ -209,8 +210,8 @@ Content-Type: application/json
 
 <br>
 
-### 3. 채용공고 삭제 `기업회원 only`
-- 채용 공고를 삭제한다.
+### 3. 채용공고 삭제
+- 채용 공고를 삭제한다. `기업회원 only`
 
 **Request URL**
 - `Authorization` 헤더에 회원 `DB Id`를 담아서 보낸다.
@@ -263,7 +264,6 @@ Authorization: userId={사용자 DB Id}
 | companyCountry | string | 회사 국가       |O|
 | companyRegion  | string | 회사 지역       |O|
 | jobPosition    | string | 채용 포지션      |O|
-| description    | string | 채용공고 내용     |O|
 | reward         | number | 채용 보상금      |O|
 | skill          | string | 사용 기술       |O|
 
@@ -277,14 +277,10 @@ Content-Type: application/json
   "jobPostings": [
     {
       "id": 123,
-      "company": {
-        "id": 456,
-        "name": "원티드",
-        "country": "한국",
-        "region": "서울"
-      },
+      "companyName: "원티드",
+      "companyCountry": "한국",
+      "companyRegion": "서울",
       "jobPositon": "백엔드 개발자",
-      "descripton": "채용 웹 서비스를 개발합니다.",
       "reward": 1000000,
       "skill": "Node.js"
     },
@@ -313,21 +309,28 @@ Authorization: userId={사용자 DB Id}
 
 |Name| Description     |Required|
 |--|-----------------|:--:|
-|id| 삭제할 채용 공고 DB Id |O|
+|id| 조회할 채용 공고 DB Id |O|
 
 **Response Body**
 
-| Name             |   Type    | Description                 |Required|  
-|------------------|:---------:|-----------------------------|:--:|
-| id               |  number   | 채용공고 DB Id                  |O|
-| companyName      |  string   | 회사 이름                       |O|
-| companyCountry   |  string   | 회사 국가                       |O|
-| companyRegion    |  string   | 회사 지역                       |O|
-| jobPosition      |  string   | 채용 포지션                      |O|
-| description      |  string   | 채용공고 내용                     |O|
-| reward           |  number   | 채용 보상금                      |O|
-| skill            |  string   | 사용 기술                       |O|
-| otherJobPostings | number[ ] | 해당 회사가 올린 다른 채용공고 `DB Id` 리스트 |O|
+| Name        |   Type    | Description                               |Required|  
+|-------------|:---------:|-------------------------------------------|:--:|
+| id          |  number   | 채용공고 DB Id                                |O|
+| company     |  Company  | 채용공고 올린 회사                                |O|
+| jobPosition |  string   | 채용 포지션                                    |O|
+| description |  string   | 채용공고 내용                                   |O|
+| reward      |  number   | 채용 보상금                                    |O|
+| skill       |  string   | 사용 기술                                     |O|
+| othersOfCompany | number[ ] | 해당 회사가 올린 다른 채용공고 `DB Id` 리스트<br/>(없으면 빈 배열) |O|
+
+- **Company**
+
+| Name    |   Type    | Description |Required|  
+|---------|:---------:|------------|:--:|
+| id      |  number   | 회사 `DB Id`   |O|
+| name    |  string   | 회사 이름      |O|
+| country |  string   | 회사 국가      |O|
+| region  |  string   | 회사 지역      |O|
 
 **Response Body 예시**
 ```
@@ -338,15 +341,18 @@ Content-Type: application/json
   "message": "채용공고가 성공적으로 조회되었습니다.",
   "jobPosting": {
     "id": 123,
-    "companyName": "원티드",
-    "companyCountry": "한국",
-    "companyRegion": "서울",
+    "company": {
+      "id": 10,
+      "name": "원티드",
+      "country": "한국",
+      "region": "서울",
+    }
     "jobPositon": "백엔드 개발자",
     "descripton": "채용 웹 서비스를 개발합니다.",
     "reward": 1000000,
     "skill": "Node.js"
   },
-  "otherJobPostings": [123, 124, 125]
+  "othersOfCompany": [124, 125, 126]
 }
 ```
 
@@ -356,8 +362,8 @@ Content-Type: application/json
 
 <br>
 
-### 6. 지원하기 `개인회원 only`
-- 채용 공고에 지원한다.
+### 6. 지원하기 
+- 채용 공고에 지원한다. `개인회원 only`
 
 **Request URL**
 - Authorization 헤더에 사용자의 DB Id를 담아서 보낸다.
@@ -386,7 +392,7 @@ Content-Type: application/json
 
 {
   "message": "지원내역이 성공적으로 등록되었습니다.",
-  "data": {
+  "jobApplication": {
     "id": 123
   }
 }
