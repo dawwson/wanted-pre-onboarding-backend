@@ -4,6 +4,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { BaseEntity } from './base-entity.entity';
 import { JobPosting } from './job-posting.entity';
@@ -16,6 +17,8 @@ export enum JobApplicationStatus {
 }
 
 @Entity('job_application')
+// NOTE: applicant_id, job_posting_id 묶어서 UNIQUE로 관리
+@Unique(['applicantId', 'jobPostingId'])
 export class JobApplication extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
