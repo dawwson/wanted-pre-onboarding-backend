@@ -22,8 +22,6 @@ export class JobApplicationController {
       jobPostingId,
     );
 
-    console.log(newJobApplication);
-
     return {
       message: '지원내역이 성공적으로 등록되었습니다.',
       jobApplication: {
