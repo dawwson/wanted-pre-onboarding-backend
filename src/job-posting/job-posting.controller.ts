@@ -92,7 +92,7 @@ export class JobPostingController {
     return {
       message: '채용공고가 성공적으로 조회되었습니다.',
       jobPosting: JobPostingDetailDto.of(jobPosting),
-      othersOfCompany: jobPostingsOfCompany.reduce((acc, jp) => {
+      otherJobPostings: jobPostingsOfCompany.reduce((acc, jp) => {
         // 현재 채용공고 id를 제외하고 id 배열 생성
         if (jp.id !== +id) {
           acc.push(jp.id);
