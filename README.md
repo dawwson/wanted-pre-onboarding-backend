@@ -75,16 +75,16 @@ Test : 테스트 코드 추가 및 수정
 | 500<br/>Internal Server Error | 	요청을 처리하는 과정에서 서버가 예상하지 못한 상황에 놓였다는 것을 나타냅니다.                        |
 
 ### 성공 응답 형식
-| Name       | Type                | Description   |
-|------------|---------------------|---------------|
-|message| string              | 성공 메세지        |
-|data| object or object[ ] | 요청에 대한 반환 데이터 |
+| Name    | Type            | Description   |
+|---------|-----------------|---------------|
+| message | string          | 성공 메세지        |
+| 자원이름    | json or json[ ] | 요청에 대한 반환 데이터 |
 
 #### 예시
 ```json
 {
   "message": "자원이 성공적으로 등록되었습니다.",
-  "data": {
+  "jobPostings": {
     "id": 123
   }
 }
@@ -146,7 +146,7 @@ Content-Type: application/json
 
 {
   "message": "채용공고가 성공적으로 등록되었습니다.",
-  "data": {
+  "jobPosting": {
     "id": 123
   }
 }
@@ -185,6 +185,7 @@ Content-Type: application/json
 |skill| string | 수정할 사용 기술         |    X     |
 
 **Response Body**
+
 |Name|Type|Description|Required|  
 |--|:--:|--|:--:|
 |id|number|수정된 채용공고 DB Id|O|
@@ -196,7 +197,7 @@ Content-Type: application/json
 
 {
   "message": "채용공고가 성공적으로 업데이트 되었습니다.",
-  "data": {
+  "jobPosting": {
     "id": 123
   }
 }
@@ -237,6 +238,7 @@ HTTP/1.1 204 No Content
 
 ### 4. 채용공고 목록 조회 및 검색
 - 채용 공고를 조회하거나 검색한다.
+- **회사 이름, 사용 기술**로 검색 가능
 
 **Request URL**
 - `Authorization` 헤더에 회원 `DB Id`를 담아서 보낸다.
@@ -260,7 +262,7 @@ Authorization: userId={사용자 DB Id}
 | companyName    | string | 회사 이름       |O|
 | companyCountry | string | 회사 국가       |O|
 | companyRegion  | string | 회사 지역       |O|
-| jobPostion     | string | 채용 포지션      |O|
+| jobPosition    | string | 채용 포지션      |O|
 | description    | string | 채용공고 내용     |O|
 | reward         | number | 채용 보상금      |O|
 | skill          | string | 사용 기술       |O|
@@ -271,13 +273,16 @@ HTTP/1.1 200 OK
 Content-Type: application/json
 
 {
-  "message": "지원내역이 성공적으로 등록되었습니다.",
-  "data": [
+  "message": "모든 채용공고가 성공적으로 조회되었습니다.",
+  "jobPostings": [
     {
       "id": 123,
-      "companyName": "원티드",
-      "companyCountry": "한국",
-      "companyRegion": "서울",
+      "company": {
+        "id": 456,
+        "name": "원티드",
+        "country": "한국",
+        "region": "서울"
+      },
       "jobPositon": "백엔드 개발자",
       "descripton": "채용 웹 서비스를 개발합니다.",
       "reward": 1000000,
@@ -312,17 +317,17 @@ Authorization: userId={사용자 DB Id}
 
 **Response Body**
 
-| Name           |   Type    | Description                 |Required|  
-|----------------|:---------:|-----------------------------|:--:|
-| id             |  number   | 채용공고 DB Id                  |O|
-| companyName    |  string   | 회사 이름                       |O|
-| companyCountry |  string   | 회사 국가                       |O|
-| companyRegion  |  string   | 회사 지역                       |O|
-| jobPostion     |  string   | 채용 포지션                      |O|
-| description    |  string   | 채용공고 내용                     |O|
-| reward         |  number   | 채용 보상금                      |O|
-| skill          |  string   | 사용 기술                       |O|
-| jobPostings    | number[ ] | 해당 회사가 올린 다른 채용공고 `DB Id` 리스트 |O|
+| Name             |   Type    | Description                 |Required|  
+|------------------|:---------:|-----------------------------|:--:|
+| id               |  number   | 채용공고 DB Id                  |O|
+| companyName      |  string   | 회사 이름                       |O|
+| companyCountry   |  string   | 회사 국가                       |O|
+| companyRegion    |  string   | 회사 지역                       |O|
+| jobPosition      |  string   | 채용 포지션                      |O|
+| description      |  string   | 채용공고 내용                     |O|
+| reward           |  number   | 채용 보상금                      |O|
+| skill            |  string   | 사용 기술                       |O|
+| otherJobPostings | number[ ] | 해당 회사가 올린 다른 채용공고 `DB Id` 리스트 |O|
 
 **Response Body 예시**
 ```
@@ -330,21 +335,18 @@ HTTP/1.1 200 OK
 Content-Type: application/json
 
 {
-  "message": "지원내역이 성공적으로 등록되었습니다.",
-  "data": [
-    {
-      "id": 123,
-      "companyName": "원티드",
-      "companyCountry": "한국",
-      "companyRegion": "서울",
-      "jobPositon": "백엔드 개발자",
-      "descripton": "채용 웹 서비스를 개발합니다.",
-      "reward": 1000000,
-      "skill": "Node.js",
-      "jobPostings": [123, 124, 125]
-    },
-    {...}
-  ]
+  "message": "채용공고가 성공적으로 조회되었습니다.",
+  "jobPosting": {
+    "id": 123,
+    "companyName": "원티드",
+    "companyCountry": "한국",
+    "companyRegion": "서울",
+    "jobPositon": "백엔드 개발자",
+    "descripton": "채용 웹 서비스를 개발합니다.",
+    "reward": 1000000,
+    "skill": "Node.js"
+  },
+  "otherJobPostings": [123, 124, 125]
 }
 ```
 
