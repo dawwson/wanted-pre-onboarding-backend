@@ -8,6 +8,7 @@ import { PostJobPostingDto } from './controller-dto/post-job-posting.dto';
 import { PatchJobPostingDto } from './controller-dto/patch-job-posting.dto';
 import { UpdateResultDto } from './service-dto/update-result.dto';
 import { DeleteResultDto } from './service-dto/delete-result.dto';
+import { FindConditionDto } from './service-dto/find-condition.dto';
 
 @Injectable()
 export class JobPostingService {
@@ -52,11 +53,17 @@ export class JobPostingService {
     return new DeleteResultDto(deleteResult.affected);
   }
 
-  /*
-  findAll() {
-    return `This action returns all jobPosting`;
+  findAll(findConditionDto: FindConditionDto) {
+    const { search } = findConditionDto;
+
+    if (!search) {
+      return this.jobPostingRepository.findWithCompany();
+    }
+    // 회사 이름, 사용기술로 검색
+    return this.jobPostingRepository.findWithCompanyBySearch(search);
   }
 
+  /*
   findOne(id: number) {
     return `This action returns a #${id} jobPosting`;
   }

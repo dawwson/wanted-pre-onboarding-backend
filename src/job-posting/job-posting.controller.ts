@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   HttpCode,
+  Get,
+  Query,
 } from '@nestjs/common';
 
 import { Roles } from '../common/guard/roles.decorator';
@@ -18,6 +20,7 @@ import { JobPostingService } from './job-posting.service';
 
 import { PostJobPostingDto } from './controller-dto/post-job-posting.dto';
 import { PatchJobPostingDto } from './controller-dto/patch-job-posting.dto';
+import { JobPostingListDto } from './controller-dto/job-posting-list.dto';
 
 @Controller('job-postings')
 export class JobPostingController {
@@ -63,12 +66,17 @@ export class JobPostingController {
     await this.jobPostingService.remove(+id);
   }
 
-  /*
   @Get()
-  findAll() {
-    return this.jobPostingService.findAll();
+  async findAllJobPostings(@Query('search') search?: string) {
+    const jobPostings = await this.jobPostingService.findAll({ search });
+    console.log(JobPostingListDto.of(jobPostings)[0]);
+    return {
+      message: '모든 채용공고가 성공적으로 조회되었습니다.',
+      jobPostings: JobPostingListDto.of(jobPostings),
+    };
   }
 
+  /*
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.jobPostingService.findOne(+id);
