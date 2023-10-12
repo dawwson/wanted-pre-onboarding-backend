@@ -50,9 +50,10 @@ Test : 테스트 코드 추가 및 수정
 - [X] 채용공고 삭제 `기업회원 only`
 - [X] 채용공고 목록 조회
   - [X] 채용공고 검색 ~~(선택사항 & 가산점)~~
-- [ ] 채용공고 상세 조회 
-  - [ ] 해당 회사가 올린 다른 채용공고 포함 ~~(선택사항 & 가산점)~~
-- [ ] 채용공고 지원 `일반회원 only` ~~(선택사항 & 가산점)~~
+- [X] 채용공고 상세 조회 
+  - [X] 채용 내용이 추가적으로 담겨 있음
+  - [X] 해당 회사가 올린 다른 채용공고 포함 ~~(선택사항 & 가산점)~~
+- [X] 채용공고 지원 `일반회원 only` ~~(선택사항 & 가산점)~~
 #### 2. 도메인 모델 설계
 - 기업회원은 여러 개의 채용 공고를 등록할 수 있다.
 - 기업회원은 등록한 채용공고를 수정, 삭제할 수 있다.
@@ -76,6 +77,7 @@ Test : 테스트 코드 추가 및 수정
 
 ### 일반적인 성공 응답 형식
 - 예외적인 케이스도 있으니, 자세한 내용은 각 API에서 확인 가능
+
 | Name    | Type            | Description             |
 |---------|-----------------|-------------------------|
 | message | string          | 성공 메세지                  |
@@ -138,7 +140,7 @@ Content-Type: application/json
 
 | Name |  Type  | Description    | Required |  
 |------|:------:|----------------|:--------:|  
-| id   | number | 생성된 채용공고 DB Id |    O     |
+| id   | number | 생성된 채용공고 `DB Id` |    O     |
 
 **Response Body 예시**
 ```
@@ -165,7 +167,7 @@ Content-Type: application/json
 **Request URL**
 - `Authorization` 헤더에 회원 `DB Id`를 담아서 보낸다.
 ```
-POST /job-postings/{id}
+PATCH /job-postings/{id}
 Authorization: userId={사용자 DB Id}
 Content-Type: application/json
 ```
@@ -174,7 +176,7 @@ Content-Type: application/json
 
 |Name| Description     |Required|
 |--|-----------------|:--:|
-|id| 수정할 채용 공고 DB Id |O|
+|id| 수정할 채용 공고 `DB Id` |O|
 
 **Request Body**
 
@@ -189,7 +191,7 @@ Content-Type: application/json
 
 |Name|Type|Description|Required|  
 |--|:--:|--|:--:|
-|id|number|수정된 채용공고 DB Id|O|
+|id|number|수정된 채용공고 `DB Id`|O|
 
 **Response Body 예시**
 ```
@@ -224,9 +226,9 @@ Authorization: userId={사용자 DB Id}
 
 |Name| Description     |Required|
 |--|-----------------|:--:|
-|id| 삭제할 채용 공고 DB Id |O|
+|id| 삭제할 채용 공고 `DB Id` |O|
 
-**Response Body**
+**Response**
 ```
 HTTP/1.1 204 No Content
 ```
@@ -259,7 +261,7 @@ Authorization: userId={사용자 DB Id}
 
 | Name           |  Type  | Description |Required|  
 |----------------|:------:|-------------|:--:|
-| id             | number | 채용공고 DB Id  |O|
+| id             | number | 채용공고 `DB Id`  |O|
 | companyName    | string | 회사 이름       |O|
 | companyCountry | string | 회사 국가       |O|
 | companyRegion  | string | 회사 지역       |O|
@@ -309,19 +311,19 @@ Authorization: userId={사용자 DB Id}
 
 |Name| Description     |Required|
 |--|-----------------|:--:|
-|id| 조회할 채용 공고 DB Id |O|
+|id| 조회할 채용 공고 `DB Id` |O|
 
 **Response Body**
 
-| Name        |   Type    | Description                               |Required|  
-|-------------|:---------:|-------------------------------------------|:--:|
-| id          |  number   | 채용공고 DB Id                                |O|
-| company     |  Company  | 채용공고 올린 회사                                |O|
-| jobPosition |  string   | 채용 포지션                                    |O|
-| description |  string   | 채용공고 내용                                   |O|
-| reward      |  number   | 채용 보상금                                    |O|
-| skill       |  string   | 사용 기술                                     |O|
-| othersOfCompany | number[ ] | 해당 회사가 올린 다른 채용공고 `DB Id` 리스트<br/>(없으면 빈 배열) |O|
+| Name             |   Type    | Description                             |Required|  
+|------------------|:---------:|-----------------------------------------|:--:|
+| id               |  number   | 채용공고 `DB Id`                              |O|
+| company          |  Company  | 채용공고 올린 회사                              |O|
+| jobPosition      |  string   | 채용 포지션                                  |O|
+| description      |  string   | 채용 내용                                   |O|
+| reward           |  number   | 채용 보상금                                  |O|
+| skill            |  string   | 사용 기술                                   |O|
+| otherJobPostings | number[ ] | 해당 회사가 올린 다른 채용공고 `DB Id` 리스트<br/>(없으면 빈 배열) |O|
 
 - **Company**
 
@@ -352,7 +354,7 @@ Content-Type: application/json
     "reward": 1000000,
     "skill": "Node.js"
   },
-  "othersOfCompany": [124, 125, 126]
+  "otherJobPostings": [124, 125, 126]
 }
 ```
 
@@ -366,7 +368,7 @@ Content-Type: application/json
 - 채용 공고에 지원한다. `개인회원 only`
 
 **Request URL**
-- Authorization 헤더에 사용자의 DB Id를 담아서 보낸다.
+- Authorization 헤더에 사용자의 `DB Id`를 담아서 보낸다.
 ```
 POST /job-applications
 Authorization: userId={사용자 DB Id}
@@ -377,13 +379,13 @@ Content-Type: application/json
 
 | Name         |  Type  | Description       | Required |
 |--------------|:------:|-------------------|:--------:|
-| jobPostingId | number | 지원할 채용 공고 DB Id   |    O     |
+| jobPostingId | number | 지원할 채용 공고 `DB Id`   |    O     |
 
 **Response Body**
 
 |Name|Type| Description |Required|  
 |--|:--:|-------------|:--:|
-|id|number| 지원내역 DB Id  |O|
+|id|number| 지원내역 `DB Id`  |O|
 
 **Response Body 예시**
 ```
