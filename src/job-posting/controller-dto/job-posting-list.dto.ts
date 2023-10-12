@@ -1,20 +1,25 @@
-import { Exclude, Expose, plainToInstance } from 'class-transformer';
+import { Exclude, Expose, plainToInstance, Transform } from 'class-transformer';
 import { JobPosting } from '../../entity/job-posting.entity';
-import { Company } from '../../entity/company.entity';
 
 @Exclude()
 export class JobPostingListDto {
   @Expose()
   id: number;
 
-  @Expose({ name: '__company__' })
-  company: Partial<Company>;
+  @Expose()
+  @Transform(({ obj }) => obj.__company__.name) // NOTE: 엔티티의 프로퍼티를 응답 DTO에 매핑
+  companyName: string;
+
+  @Expose()
+  @Transform(({ obj }) => obj.__company__.country) // NOTE: 엔티티의 프로퍼티를 응답 DTO에 매핑
+  companyCountry: string;
+
+  @Expose()
+  @Transform(({ obj }) => obj.__company__.region) // NOTE: 엔티티의 프로퍼티를 응답 DTO에 매핑
+  companyRegion: string;
 
   @Expose()
   jobPosition: string;
-
-  @Expose()
-  description: string;
 
   @Expose()
   reward: number;
