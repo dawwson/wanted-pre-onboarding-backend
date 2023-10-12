@@ -53,7 +53,7 @@ export class JobPostingService {
     return new DeleteResultDto(deleteResult.affected);
   }
 
-  findAll(findConditionDto: FindConditionDto) {
+  findAll(findConditionDto: FindConditionDto): Promise<JobPosting[]> {
     const { search } = findConditionDto;
 
     if (!search) {
@@ -63,9 +63,11 @@ export class JobPostingService {
     return this.jobPostingRepository.findWithCompanyBySearch(search);
   }
 
-  /*
-  findOne(id: number) {
-    return `This action returns a #${id} jobPosting`;
+  findOne(id: number): Promise<JobPosting> {
+    return this.jobPostingRepository.findWithCompanyById(id);
   }
- */
+
+  findAllOfCompany(companyId: number): Promise<JobPosting[]> {
+    return this.jobPostingRepository.findByCompanyId(companyId);
+  }
 }

@@ -21,6 +21,7 @@ import { JobPostingService } from './job-posting.service';
 import { PostJobPostingDto } from './controller-dto/post-job-posting.dto';
 import { PatchJobPostingDto } from './controller-dto/patch-job-posting.dto';
 import { JobPostingListDto } from './controller-dto/job-posting-list.dto';
+import { JobPostingDetailDto } from './controller-dto/job-posting-detail.dto';
 
 @Controller('job-postings')
 export class JobPostingController {
@@ -39,7 +40,10 @@ export class JobPostingController {
       req.user.id,
       postJobPostingDto,
     );
-    return { id: newJobPosting.id }; // TODO: Response 타입 지정
+    return {
+      message: '채용공고가 성공적으로 등록되었습니다.',
+      jobPosting: { id: newJobPosting.id },
+    };
   }
 
   @Patch(':id')
@@ -54,7 +58,7 @@ export class JobPostingController {
 
     return {
       message: '채용공고가 성공적으로 업데이트 되었습니다.',
-      data: { id },
+      jobPosting: { id },
     };
   }
 
@@ -69,17 +73,32 @@ export class JobPostingController {
   @Get()
   async findAllJobPostings(@Query('search') search?: string) {
     const jobPostings = await this.jobPostingService.findAll({ search });
-    console.log(JobPostingListDto.of(jobPostings)[0]);
+
     return {
       message: '모든 채용공고가 성공적으로 조회되었습니다.',
       jobPostings: JobPostingListDto.of(jobPostings),
     };
   }
 
-  /*
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.jobPostingService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    // 1. 현재 채용공고 상세 조회
+    const jobPosting = await this.jobPostingService.findOne(+id);
+    // 2. 현재 채용공고의 회사에서 올린 다른 채용공고 조회
+    const jobPostingsOfCompany = await this.jobPostingService.findAllOfCompany(
+      jobPosting['__company__'].id, // NOTE: lazy 로딩으로 인해 __company__로 변환됨
+    );
+
+    return {
+      message: '채용공고가 성공적으로 조회되었습니다.',
+      jobPosting: JobPostingDetailDto.of(jobPosting),
+      othersOfCompany: jobPostingsOfCompany.reduce((acc, jp) => {
+        // 현재 채용공고 id를 제외하고 id 배열 생성
+        if (jp.id !== +id) {
+          acc.push(jp.id);
+        }
+        return acc;
+      }, [] as number[]),
+    };
   }
- */
 }
