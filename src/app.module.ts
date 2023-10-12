@@ -15,6 +15,7 @@ import { JobPostingModule } from './job-posting/job-posting.module';
 import { UserModule } from './user/user.module';
 
 import { AppController } from './app.controller';
+import { JobApplicationModule } from './job-application/job-application.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { AppController } from './app.controller';
     }),
     JobPostingModule,
     UserModule,
+    JobApplicationModule,
   ],
   controllers: [AppController],
   providers: [
