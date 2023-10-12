@@ -1,11 +1,11 @@
 import { Controller, Post, Body, Req } from '@nestjs/common';
 
 import { Roles } from '../common/guard/roles.decorator';
+import { RequestWithUser } from '../common/interface/request.interface';
 import { Role } from '../entity/user.entity';
 
-import { PostJobApplicationDto } from './dto/post-job-application.dto';
+import { PostJobApplicationDto } from './controller-dto/post-job-application.dto';
 import { JobApplicationService } from './job-application.service';
-import { RequestWithUser } from '../common/interface/request.interface';
 
 @Controller('job-applications')
 export class JobApplicationController {

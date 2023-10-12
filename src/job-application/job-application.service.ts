@@ -10,11 +10,11 @@ export class JobApplicationService {
   ) {}
 
   async register(
-    userId: number,
+    applicantId: number,
     jobPostingId: number,
   ): Promise<JobApplication> {
     const jobApplication = new JobApplication();
-    jobApplication.applicantId = userId;
+    jobApplication.applicantId = applicantId;
     jobApplication.jobPostingId = jobPostingId;
 
     try {
