@@ -226,9 +226,69 @@ describe('JobPostingController', () => {
     });
   });
 
-  test('getDetailJobPosting() : 생성된 채용공고 id를 반환한다.', () => {
+  test('getDetailJobPosting() : 채용공고 상세 내용을 반환한다.', async () => {
     // given
+    // 1. 테스트 채용공고 Id
+    const testJobPostingId: string = '1';
+    const testOtherJobPostingId1: number = 2;
+    const testOtherJobPostingId2: number = 3;
+
+    // 2. Service 레이어 Mocking(Mock 데이터로 필요한 값을 반환한다고 가정함)
+    const getOneSpy = jest
+      .spyOn(jobPostingService, 'getOne')
+      .mockResolvedValue({
+        id: 1,
+        __company__: {
+          id: 1,
+          name: '원티드',
+          country: '한국',
+          region: '서울',
+        } as Company,
+        jobPosition: '백엔드 개발자',
+        description: '채용서비스 백엔드를 개발합니다!',
+        reward: 10000,
+        skill: 'javascript',
+      } as JobPosting);
+
+    const getAllOfCompanySpy = jest
+      .spyOn(jobPostingService, 'getAllOfCompany')
+      .mockResolvedValue([
+        { id: testOtherJobPostingId1 },
+        { id: testOtherJobPostingId2 },
+      ] as JobPosting[]);
+
     // when
+    const response =
+      await jobPostingController.getDetailJobPosting(testJobPostingId);
+
     // then
+    // 1. Service 호출 여부 검증
+    expect(getOneSpy).toHaveBeenCalled();
+    expect(getAllOfCompanySpy).toHaveBeenCalled();
+    // 2. 반환값 확인
+    expect(response.message).toBeDefined();
+    // 프로퍼티 key와 value 타입 검증
+    expect(response.jobPosting).toMatchObject({
+      id: expect.any(Number),
+      company: {
+        id: expect.any(Number),
+        name: expect.any(String),
+        country: expect.any(String),
+        region: expect.any(String),
+      },
+      jobPosition: expect.any(String),
+      description: expect.any(String),
+      reward: expect.any(Number),
+      skill: expect.any(String),
+    });
+    // 다른 채용공고의 갯수와 테스트 데이터 포함 여부 검증
+    expect(response.otherJobPostings).toHaveLength(2);
+    expect(response.otherJobPostings).toEqual(
+      expect.arrayContaining([testOtherJobPostingId1, testOtherJobPostingId2]),
+    );
+    // 상세 조회한 채용공고 id는 포함하지 않았는지 검증
+    expect(response.otherJobPostings).toEqual(
+      expect.not.arrayContaining([testJobPostingId]),
+    );
   });
 });
