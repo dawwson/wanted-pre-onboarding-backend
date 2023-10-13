@@ -71,8 +71,8 @@ export class JobPostingController {
   }
 
   @Get()
-  async findAllJobPostings(@Query('search') search?: string) {
-    const jobPostings = await this.jobPostingService.findAll({ search });
+  async getAllJobPostings(@Query('search') search?: string) {
+    const jobPostings = await this.jobPostingService.getAll({ search });
 
     return {
       message: '모든 채용공고가 성공적으로 조회되었습니다.',
@@ -83,9 +83,9 @@ export class JobPostingController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     // 1. 현재 채용공고 상세 조회
-    const jobPosting = await this.jobPostingService.findOne(+id);
+    const jobPosting = await this.jobPostingService.getOne(+id);
     // 2. 현재 채용공고의 회사에서 올린 다른 채용공고 조회
-    const jobPostingsOfCompany = await this.jobPostingService.findAllOfCompany(
+    const jobPostingsOfCompany = await this.jobPostingService.getAllOfCompany(
       jobPosting['__company__'].id, // NOTE: lazy 로딩으로 인해 __company__로 변환됨
     );
 

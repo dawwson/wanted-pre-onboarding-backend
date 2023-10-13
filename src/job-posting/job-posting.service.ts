@@ -42,11 +42,12 @@ export class JobPostingService {
   }
 
   async remove(id: number): Promise<DeleteResultDto> {
+    // TODO: APPLIED인 지원내역이 있는지 검사
     const deleteResult = await this.jobPostingRepository.delete(id);
     return new DeleteResultDto(deleteResult.affected);
   }
 
-  findAll(findConditionDto: FindConditionDto): Promise<JobPosting[]> {
+  getAll(findConditionDto: FindConditionDto): Promise<JobPosting[]> {
     const { search } = findConditionDto;
 
     if (!search) {
@@ -56,11 +57,11 @@ export class JobPostingService {
     return this.jobPostingRepository.findWithCompanyBySearch(search);
   }
 
-  findOne(id: number): Promise<JobPosting> {
+  getOne(id: number): Promise<JobPosting> {
     return this.jobPostingRepository.findWithCompanyById(id);
   }
 
-  findAllOfCompany(companyId: number): Promise<JobPosting[]> {
+  getAllOfCompany(companyId: number): Promise<JobPosting[]> {
     return this.jobPostingRepository.findByCompanyId(companyId);
   }
 }
