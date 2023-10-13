@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { JobApplicationController } from '../../src/api/job-application/job-application.controller';
-import { JobApplicationService } from '../../src/api/job-application/job-application.service';
-import { RequestWithUser } from '../../src/common/interface/request.interface';
-import { PostJobApplicationDto } from '../../src/api/job-application/controller-dto/post-job-application.dto';
+import { JobApplicationController } from '../../../src/api/job-application/job-application.controller';
+import { JobApplicationService } from '../../../src/api/job-application/job-application.service';
+import { RequestWithUser } from '../../../src/common/interface/request.interface';
+import { PostJobApplicationDto } from '../../../src/api/job-application/controller-dto/post-job-application.dto';
 import {
   JobApplication,
   JobApplicationStatus,
-} from '../../src/entity/job-application.entity';
+} from '../../../src/entity/job-application.entity';
 
 describe('JobApplicationController', () => {
   let jobApplicationController: JobApplicationController;

@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { JobPostingRepository } from '../../src/repository/job-posting.repository';
-import { CompanyRepository } from '../../src/repository/company.repository';
+import { JobPostingRepository } from '../../../src/repository/job-posting.repository';
+import { CompanyRepository } from '../../../src/repository/company.repository';
 
-import { PostJobPostingDto } from '../../src/api/job-posting/controller-dto/post-job-posting.dto';
-import { JobPosting } from '../../src/entity/job-posting.entity';
+import { PostJobPostingDto } from '../../../src/api/job-posting/controller-dto/post-job-posting.dto';
+import { JobPosting } from '../../../src/entity/job-posting.entity';
 
-import { JobPostingService } from '../../src/api/job-posting/job-posting.service';
+import { JobPostingService } from '../../../src/api/job-posting/job-posting.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('JobPostingService', () => {

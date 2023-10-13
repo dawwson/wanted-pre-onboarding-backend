@@ -2,23 +2,23 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { RequestWithUser } from '../../src/common/interface/request.interface';
+import { RequestWithUser } from '../../../src/common/interface/request.interface';
 
-import { Company } from '../../src/entity/company.entity';
-import { JobPosting } from '../../src/entity/job-posting.entity';
+import { Company } from '../../../src/entity/company.entity';
+import { JobPosting } from '../../../src/entity/job-posting.entity';
 
-import { CompanyRepository } from '../../src/repository/company.repository';
-import { UserRepository } from '../../src/repository/user.repository';
-import { JobPostingRepository } from '../../src/repository/job-posting.repository';
+import { CompanyRepository } from '../../../src/repository/company.repository';
+import { UserRepository } from '../../../src/repository/user.repository';
+import { JobPostingRepository } from '../../../src/repository/job-posting.repository';
 
-import { UserService } from '../../src/api/user/user.service';
+import { UserService } from '../../../src/api/user/user.service';
 
-import { JobPostingController } from '../../src/api/job-posting/job-posting.controller';
-import { JobPostingService } from '../../src/api/job-posting/job-posting.service';
-import { PostJobPostingDto } from '../../src/api/job-posting/controller-dto/post-job-posting.dto';
-import { UpdateResultDto } from '../../src/api/job-posting/service-dto/update-result.dto';
-import { PatchJobPostingDto } from '../../src/api/job-posting/controller-dto/patch-job-posting.dto';
-import { DeleteResultDto } from '../../src/api/job-posting/service-dto/delete-result.dto';
+import { JobPostingController } from '../../../src/api/job-posting/job-posting.controller';
+import { JobPostingService } from '../../../src/api/job-posting/job-posting.service';
+import { PostJobPostingDto } from '../../../src/api/job-posting/controller-dto/post-job-posting.dto';
+import { UpdateResultDto } from '../../../src/api/job-posting/service-dto/update-result.dto';
+import { PatchJobPostingDto } from '../../../src/api/job-posting/controller-dto/patch-job-posting.dto';
+import { DeleteResultDto } from '../../../src/api/job-posting/service-dto/delete-result.dto';
 
 describe('JobPostingController', () => {
   let jobPostingController: JobPostingController;

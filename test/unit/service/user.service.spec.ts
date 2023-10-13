@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Repository } from 'typeorm';
 
-import { Role, User } from '../../src/entity/user.entity';
-import { UserRepository } from '../../src/repository/user.repository';
-import { UserService } from '../../src/api/user/user.service';
+import { Role, User } from '../../../src/entity/user.entity';
+import { UserRepository } from '../../../src/repository/user.repository';
+import { UserService } from '../../../src/api/user/user.service';
 
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { JobPostingRepository } from '../../src/repository/job-posting.repository';
+import { JobPostingRepository } from '../../../src/repository/job-posting.repository';
 
 describe('UserService', () => {
   let userService: UserService;
