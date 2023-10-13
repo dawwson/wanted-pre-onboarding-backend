@@ -229,6 +229,61 @@ describe('JobPostingController', () => {
     });
   });
 
+  test('getAllJobPostings() : 채용 공고 리스트를 반환한다. - 검색 O', async () => {
+    // given
+    // 1. 테스트 검색 내용
+    const testSearch = '원';
+    // 2. Service 레이어 Mocking(Mock 데이터로 필요한 값을 반환한다고 가정함)
+    const getAllSpy = jest
+      .spyOn(jobPostingService, 'getAll')
+      .mockResolvedValue([
+        {
+          id: 1,
+          __company__: {
+            id: 1,
+            name: '원티드',
+            country: '한국',
+            region: '서울',
+          } as Company,
+          jobPosition: '백엔드 개발자',
+          reward: 10000,
+          skill: 'javascript',
+        },
+        {
+          id: 2,
+          __company__: {
+            id: 1,
+            name: '원티드',
+            country: '한국',
+            region: '서울',
+          } as Company,
+          jobPosition: '프론트엔드 개발자',
+          reward: 20000,
+          skill: 'nodejs',
+        },
+      ] as JobPosting[]);
+
+    // when
+    const response = await jobPostingController.getAllJobPostings(testSearch);
+
+    // then
+    expect(getAllSpy).toHaveBeenCalled();
+    expect(response.message).toBeDefined();
+    // 프로퍼티 key와 value 타입 검증
+    response.jobPostings.forEach((jp) => {
+      expect(jp).toMatchObject({
+        id: expect.any(Number),
+        // 검색 내용이 들어가 있는지 검증
+        companyName: expect.stringContaining(testSearch),
+        companyCountry: expect.any(String),
+        companyRegion: expect.any(String),
+        jobPosition: expect.any(String),
+        reward: expect.any(Number),
+        skill: expect.any(String),
+      });
+    });
+  });
+
   test('getDetailJobPosting() : 채용공고 상세 내용을 반환한다.', async () => {
     // given
     // 1. 테스트 채용공고 Id
