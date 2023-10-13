@@ -18,7 +18,7 @@ export class AuthMiddleware implements NestMiddleware {
     const userId = parseInt(authorization.split(' ')[1]);
     // TODO: authorization에 대한 유효성 검사
 
-    const user = await this.userService.getUser(userId);
+    const user = await this.userService.getOne(userId);
     if (!user) {
       throw new UnauthorizedException('Invalid user');
     }

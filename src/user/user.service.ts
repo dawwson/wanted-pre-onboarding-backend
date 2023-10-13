@@ -15,7 +15,7 @@ export class UserService {
     private readonly jobPostingRepository: JobPostingRepository,
   ) {}
 
-  getUser(id: number): Promise<User> {
+  getOne(id: number): Promise<User> {
     return this.userRepository.findById(id);
   }
 
