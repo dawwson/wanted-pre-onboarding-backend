@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 import { RequestWithUser } from '../../src/common/interface/request.interface';
 
+import { Company } from '../../src/entity/company.entity';
 import { JobPosting } from '../../src/entity/job-posting.entity';
 
 import { CompanyRepository } from '../../src/repository/company.repository';
@@ -18,7 +19,6 @@ import { PostJobPostingDto } from '../../src/api/job-posting/controller-dto/post
 import { UpdateResultDto } from '../../src/api/job-posting/service-dto/update-result.dto';
 import { PatchJobPostingDto } from '../../src/api/job-posting/controller-dto/patch-job-posting.dto';
 import { DeleteResultDto } from '../../src/api/job-posting/service-dto/delete-result.dto';
-import { Company } from '../../src/entity/company.entity';
 
 describe('JobPostingController', () => {
   let jobPostingController: JobPostingController;
@@ -215,14 +215,17 @@ describe('JobPostingController', () => {
     // then
     expect(getAllSpy).toHaveBeenCalled();
     expect(response.message).toBeDefined();
+    // 프로퍼티 key와 value 타입 검증
     response.jobPostings.forEach((jp) => {
-      expect(jp.id).toBeDefined();
-      expect(jp.companyName).toBeDefined();
-      expect(jp.companyCountry).toBeDefined();
-      expect(jp.companyRegion).toBeDefined();
-      expect(jp.jobPosition).toBeDefined();
-      expect(jp.reward).toBeDefined();
-      expect(jp.skill).toBeDefined();
+      expect(jp).toMatchObject({
+        id: expect.any(Number),
+        companyName: expect.any(String),
+        companyCountry: expect.any(String),
+        companyRegion: expect.any(String),
+        jobPosition: expect.any(String),
+        reward: expect.any(Number),
+        skill: expect.any(String),
+      });
     });
   });
 
