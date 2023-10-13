@@ -17,22 +17,15 @@ export class JobPostingService {
     private readonly companyRepository: CompanyRepository,
   ) {}
 
-  // TODO: postJobPostingDto에서 서비스용 다른 dto로 변환해야할지 고민됨...
   async register(
     userId: number,
     postJobPostingDto: PostJobPostingDto,
   ): Promise<JobPosting> {
+    // 채용공고를 올릴 회사 조회
     const company = await this.companyRepository.findByManagerId(userId);
-
-    // TODO: 채용포지션 중복검사?
-    // TODO: 엔티티 안으로 비즈니스 로직 넣어서 리팩터
-    const jobPostingToSave = new JobPosting();
-    jobPostingToSave.company = company;
-    jobPostingToSave.jobPosition = postJobPostingDto.jobPosition;
-    jobPostingToSave.description = postJobPostingDto.description;
-    jobPostingToSave.reward = postJobPostingDto.reward;
-    jobPostingToSave.skill = postJobPostingDto.skill;
-
+    // JobPosting 객체 생성
+    const jobPostingToSave = JobPosting.create(company, postJobPostingDto);
+    // DB에 저장
     return this.jobPostingRepository.save(jobPostingToSave);
   }
 

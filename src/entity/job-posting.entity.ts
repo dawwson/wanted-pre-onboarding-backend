@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { BaseEntity } from './base-entity.entity';
 import { Company } from './company.entity';
+import { PostJobPostingDto } from '../job-posting/controller-dto/post-job-posting.dto';
 
 @Entity('job_posting')
 export class JobPosting extends BaseEntity {
@@ -28,4 +29,19 @@ export class JobPosting extends BaseEntity {
 
   @Column()
   skill: string;
+
+  /**
+   * JobPosting 생성 메서드
+   * @param company
+   * @param postJobPostingDto
+   */
+  static create(company: Company, postJobPostingDto: PostJobPostingDto) {
+    const jobPosting = new JobPosting();
+    jobPosting.company = company;
+    jobPosting.jobPosition = postJobPostingDto.jobPosition;
+    jobPosting.description = postJobPostingDto.description;
+    jobPosting.reward = postJobPostingDto.reward;
+    jobPosting.skill = postJobPostingDto.skill;
+    return jobPosting;
+  }
 }
