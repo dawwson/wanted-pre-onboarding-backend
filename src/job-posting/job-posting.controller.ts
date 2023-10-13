@@ -81,7 +81,7 @@ export class JobPostingController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async getDetailJobPosting(@Param('id') id: string) {
     // 1. 현재 채용공고 상세 조회
     const jobPosting = await this.jobPostingService.getOne(+id);
     // 2. 현재 채용공고의 회사에서 올린 다른 채용공고 조회
