@@ -56,6 +56,7 @@ import { JobApplicationModule } from './job-application/job-application.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {
+    // 모든 엔드포인트에 미들웨어 설정
     consumer.apply(AuthMiddleware).forRoutes('*');
   }
 }
