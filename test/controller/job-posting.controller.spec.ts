@@ -12,12 +12,12 @@ import { JobPostingRepository } from '../../src/repository/job-posting.repositor
 
 import { UserService } from '../../src/api/user/user.service';
 
-import { PostJobPostingDto } from '../../src/api/job-posting/controller-dto/post-job-posting.dto';
 import { JobPostingController } from '../../src/api/job-posting/job-posting.controller';
 import { JobPostingService } from '../../src/api/job-posting/job-posting.service';
+import { PostJobPostingDto } from '../../src/api/job-posting/controller-dto/post-job-posting.dto';
 import { UpdateResultDto } from '../../src/api/job-posting/service-dto/update-result.dto';
-import { raw } from 'express';
 import { PatchJobPostingDto } from '../../src/api/job-posting/controller-dto/patch-job-posting.dto';
+import { DeleteResultDto } from '../../src/api/job-posting/service-dto/delete-result.dto';
 
 describe('JobPostingController', () => {
   let jobPostingController: JobPostingController;
@@ -92,7 +92,7 @@ describe('JobPostingController', () => {
     } as PostJobPostingDto;
 
     // 4. Service 레이어 Mocking(필요한 값을 반환한다고 가정함)
-    const jobPostingServiceSpy = jest
+    const registerSpy = jest
       .spyOn(jobPostingService, 'register')
       .mockResolvedValue({
         id: testJobPostingId,
@@ -105,7 +105,7 @@ describe('JobPostingController', () => {
     );
 
     // then
-    expect(jobPostingServiceSpy).toHaveBeenCalled();
+    expect(registerSpy).toHaveBeenCalled();
     expect(response.message).toBeDefined();
     expect(response.jobPosting.id).toBe(testJobPostingId);
   });
@@ -129,7 +129,7 @@ describe('JobPostingController', () => {
     } as PatchJobPostingDto;
 
     // 4. Service 레이어 Mocking(필요한 값을 반환한다고 가정함)
-    const jobPostingServiceSpy = jest
+    const updateSpy = jest
       .spyOn(jobPostingService, 'update')
       .mockResolvedValue({
         affected: 1,
@@ -143,15 +143,37 @@ describe('JobPostingController', () => {
     );
 
     // then
-    expect(jobPostingServiceSpy).toHaveBeenCalled();
+    expect(updateSpy).toHaveBeenCalled();
     expect(response.message).toBeDefined();
     expect(response.jobPosting.id).toBe(testJobPostingId);
   });
 
-  test('removeJobPosting() : 생성된 채용공고 id를 반환한다.', () => {
+  test('removeJobPosting() : 삭제 후 아무 값도 반환하지 않는다.', async () => {
     // given
+    // 1. 테스트 채용공고 Id
+    const testJobPostingId: string = '1';
+
+    // 2. 테스트 Request 객체
+    const testRequest = {
+      user: { id: 1 },
+    } as RequestWithUser;
+
+    // 3. Service 레이어 Mocking(필요한 값을 반환한다고 가정함)
+    const removeSpy = jest
+      .spyOn(jobPostingService, 'remove')
+      .mockResolvedValue({
+        affected: 1,
+      } as DeleteResultDto);
+
     // when
+    const response = await jobPostingController.removeJobPosting(
+      testRequest,
+      testJobPostingId,
+    );
+
     // then
+    expect(removeSpy).toHaveBeenCalled();
+    expect(response).toBeUndefined();
   });
 
   test('getJobPosting() : 생성된 채용공고 id를 반환한다.', () => {
