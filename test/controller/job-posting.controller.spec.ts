@@ -15,6 +15,9 @@ import { UserService } from '../../src/api/user/user.service';
 import { PostJobPostingDto } from '../../src/api/job-posting/controller-dto/post-job-posting.dto';
 import { JobPostingController } from '../../src/api/job-posting/job-posting.controller';
 import { JobPostingService } from '../../src/api/job-posting/job-posting.service';
+import { UpdateResultDto } from '../../src/api/job-posting/service-dto/update-result.dto';
+import { raw } from 'express';
+import { PatchJobPostingDto } from '../../src/api/job-posting/controller-dto/patch-job-posting.dto';
 
 describe('JobPostingController', () => {
   let jobPostingController: JobPostingController;
@@ -68,19 +71,19 @@ describe('JobPostingController', () => {
 
   it('should be defined', () => {
     expect(jobPostingController).toBeDefined();
-    expect(jobPostingService).toBeDefined();
   });
 
   test('registerJobPosting() : 생성된 채용공고 id를 반환한다.', async () => {
     // given
+    // 1. 테스트 채용공고 Id
     const testJobPostingId: number = 1;
 
-    // 1. Mock Request 객체
-    const mockRequest = {
+    // 2. 테스트 Request 객체
+    const testRequest = {
       user: { id: 1 },
     } as RequestWithUser;
 
-    // 2. Mock Dto 객체
+    // 3. 테스트 요청 DTO 객체
     const testDto = {
       jobPosition: 'test position',
       description: 'test description',
@@ -88,7 +91,7 @@ describe('JobPostingController', () => {
       skill: 'test skill',
     } as PostJobPostingDto;
 
-    // 3. Service 레이어 Mocking(필요한 값을 반환한다고 가정함)
+    // 4. Service 레이어 Mocking(필요한 값을 반환한다고 가정함)
     const jobPostingServiceSpy = jest
       .spyOn(jobPostingService, 'register')
       .mockResolvedValue({
@@ -97,7 +100,7 @@ describe('JobPostingController', () => {
 
     // when
     const response = await jobPostingController.registerJobPosting(
-      mockRequest,
+      testRequest,
       testDto,
     );
 
@@ -107,10 +110,42 @@ describe('JobPostingController', () => {
     expect(response.jobPosting.id).toBe(testJobPostingId);
   });
 
-  test('updateJobPosting() : 수정된 채용공고 id를 반환한다.', () => {
+  test('updateJobPosting() : 수정된 채용공고 id를 반환한다.', async () => {
     // given
+    // 1. 테스트 채용공고 Id
+    const testJobPostingId: string = '1';
+
+    // 2. 테스트 Request 객체
+    const testRequest = {
+      user: { id: 1 },
+    } as RequestWithUser;
+
+    // 3. 테스트 요청 DTO 객체
+    const testDto = {
+      jobPosition: '수정할 채용 포지션',
+      description: '수정할 채용 내용',
+      reward: 10000,
+      skill: '수정할 사용 기술',
+    } as PatchJobPostingDto;
+
+    // 4. Service 레이어 Mocking(필요한 값을 반환한다고 가정함)
+    const jobPostingServiceSpy = jest
+      .spyOn(jobPostingService, 'update')
+      .mockResolvedValue({
+        affected: 1,
+      } as UpdateResultDto);
+
     // when
+    const response = await jobPostingController.updateJobPosting(
+      testRequest,
+      testJobPostingId,
+      testDto,
+    );
+
     // then
+    expect(jobPostingServiceSpy).toHaveBeenCalled();
+    expect(response.message).toBeDefined();
+    expect(response.jobPosting.id).toBe(testJobPostingId);
   });
 
   test('removeJobPosting() : 생성된 채용공고 id를 반환한다.', () => {
