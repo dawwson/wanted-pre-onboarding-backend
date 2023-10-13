@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { NextFunction } from 'express';
 
-import { UserService } from '../../user/user.service';
+import { UserService } from '../../api/user/user.service';
 import { RequestWithUser } from '../interface/request.interface';
 
 @Injectable()

@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 
-import { JobApplication } from '../entity/job-application.entity';
-import { JobApplicationRepository } from '../repository/job-application.repository';
+import { JobApplication } from '../../entity/job-application.entity';
+import { JobApplicationRepository } from '../../repository/job-application.repository';
 
 @Injectable()
 export class JobApplicationService {

@@ -11,11 +11,11 @@ import { AuthMiddleware } from './common/middleware/auth.middleware';
 import dbConfig from './config/db.config';
 import serverConfig from './config/server.config';
 
-import { JobPostingModule } from './job-posting/job-posting.module';
-import { UserModule } from './user/user.module';
+import { JobPostingModule } from './api/job-posting/job-posting.module';
+import { UserModule } from './api/user/user.module';
 
 import { AppController } from './app.controller';
-import { JobApplicationModule } from './job-application/job-application.module';
+import { JobApplicationModule } from './api/job-application/job-application.module';
 
 @Module({
   imports: [

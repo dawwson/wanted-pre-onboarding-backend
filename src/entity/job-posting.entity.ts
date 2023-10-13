@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { BaseEntity } from './base-entity.entity';
 import { Company } from './company.entity';
-import { PostJobPostingDto } from '../job-posting/controller-dto/post-job-posting.dto';
+import { PostJobPostingDto } from '../api/job-posting/controller-dto/post-job-posting.dto';
 
 @Entity('job_posting')
 export class JobPosting extends BaseEntity {

@@ -1,24 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Repository } from 'typeorm';
 
 import { JobPostingRepository } from '../../src/repository/job-posting.repository';
 import { CompanyRepository } from '../../src/repository/company.repository';
 
-import { PostJobPostingDto } from '../../src/job-posting/controller-dto/post-job-posting.dto';
+import { PostJobPostingDto } from '../../src/api/job-posting/controller-dto/post-job-posting.dto';
 import { JobPosting } from '../../src/entity/job-posting.entity';
-import { Company } from '../../src/entity/company.entity';
 
-import { JobPostingService } from '../../src/job-posting/job-posting.service';
+import { JobPostingService } from '../../src/api/job-posting/job-posting.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('JobPostingService', () => {
-  type MockRepository<T = any> = Partial<
-    Record<keyof Repository<T>, jest.Mock>
-  >;
-
   let jobPostingService: JobPostingService;
-  let jobPostingRepository: MockRepository<JobPosting>;
-  let companyRepository: MockRepository<Repository<Company>>;
+  let jobPostingRepository: JobPostingRepository;
+  let companyRepository: CompanyRepository;
 
+  // Mock Repository
+  // DB 연결 없이 레파지토리와 독립적으로 service를 테스트하기 위함
   const mockJobPostingRepository = {
     save: jest.fn(),
   };
@@ -28,24 +25,27 @@ describe('JobPostingService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [],
       providers: [
         JobPostingService,
-        // 모킹된 객체를 제공
+        // 모킹된 Repository를 제공
         {
-          provide: JobPostingRepository,
+          provide: getRepositoryToken(JobPostingRepository),
           useValue: mockJobPostingRepository,
         },
         {
-          provide: CompanyRepository,
+          provide: getRepositoryToken(CompanyRepository),
           useValue: mockCompanyRepository,
         },
       ],
     }).compile();
 
     jobPostingService = module.get(JobPostingService);
-    jobPostingRepository = module.get(JobPostingRepository);
-    companyRepository = module.get(CompanyRepository);
+    jobPostingRepository = module.get<JobPostingRepository>(
+      getRepositoryToken(JobPostingRepository),
+    );
+    companyRepository = module.get<CompanyRepository>(
+      getRepositoryToken(CompanyRepository),
+    );
   });
 
   it('should be defined', () => {
@@ -53,7 +53,7 @@ describe('JobPostingService', () => {
     expect(jobPostingRepository).toBeDefined();
   });
 
-  test('채용공고 등록 : 성공 시 등록된 채용공고 객체를 반환한다.', async () => {
+  test('register() : 등록된 채용공고 엔티티를 반환한다.', async () => {
     // given
     // 테스트 회원 id
     const testUserId: number = 1;
@@ -64,17 +64,16 @@ describe('JobPostingService', () => {
       reward: 1000000,
       skill: 'nodejs',
     };
-
-    // 의존성의 가짜 반환값 => 실제 DB에 접근하지 않도록 하기 위함.
-    jobPostingRepository.save.mockResolvedValue({
-      id: 1,
+    const mockRepoValue = {
+      id: testUserId,
       jobPosition: '백엔드 개발자',
       description: '채용 서비스를 개발합니다!',
       reward: 1000000,
       skill: 'nodejs',
-      createdAt: '2023-10-09T19:40:58.200Z',
-      updatedAt: '2023-10-09T19:40:58.200Z',
-    });
+    } as JobPosting;
+
+    // 의존성의 가짜 반환값 => 실제 DB에 접근하지 않도록 하기 위함.
+    jest.spyOn(jobPostingRepository, 'save').mockResolvedValue(mockRepoValue);
 
     // when
     const result = await jobPostingService.register(

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { JobPosting } from '../entity/job-posting.entity';
-import { JobPostingRepository } from '../repository/job-posting.repository';
-import { CompanyRepository } from '../repository/company.repository';
+import { JobPosting } from '../../entity/job-posting.entity';
+import { JobPostingRepository } from '../../repository/job-posting.repository';
+import { CompanyRepository } from '../../repository/company.repository';
 
 import { PostJobPostingDto } from './controller-dto/post-job-posting.dto';
 import { PatchJobPostingDto } from './controller-dto/patch-job-posting.dto';

@@ -1,6 +1,6 @@
 import { Exclude, Expose, plainToInstance } from 'class-transformer';
-import { JobPosting } from '../../entity/job-posting.entity';
-import { Company } from '../../entity/company.entity';
+import { JobPosting } from '../../../entity/job-posting.entity';
+import { Company } from '../../../entity/company.entity';
 
 @Exclude()
 export class JobPostingDetailDto {

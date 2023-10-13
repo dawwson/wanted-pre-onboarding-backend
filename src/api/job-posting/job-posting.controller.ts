@@ -11,9 +11,9 @@ import {
   Query,
 } from '@nestjs/common';
 
-import { Roles } from '../common/guard/roles.decorator';
-import { RequestWithUser } from '../common/interface/request.interface';
-import { Role } from '../entity/user.entity';
+import { Roles } from '../../common/guard/roles.decorator';
+import { RequestWithUser } from '../../common/interface/request.interface';
+import { Role } from '../../entity/user.entity';
 
 import { UserService } from '../user/user.service';
 import { JobPostingService } from './job-posting.service';
