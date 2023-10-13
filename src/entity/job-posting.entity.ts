@@ -18,6 +18,11 @@ export class JobPosting extends BaseEntity {
   @JoinColumn({ name: 'company_id' })
   company: Company;
 
+  // NOTE: lazy loading 시 prefix, suffix를 붙여서 주는데,
+  // controller 단위 테스트할 때 타입이 필요해서 추가함(DB 테이블에는 생기지 않음)
+  // TODO: company로 반환할 수 있는 방법 찾아보기
+  __company__: Company;
+
   @Column({ name: 'job_position' })
   jobPosition: string;
 
