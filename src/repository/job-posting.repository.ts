@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, ILike, Repository } from 'typeorm';
 
 import { JobPosting } from '../entity/job-posting.entity';
 
@@ -28,8 +28,12 @@ export class JobPostingRepository extends Repository<JobPosting> {
       },
       // LEFT JOIN company ON company.id = job_posting.company_id
       relations: { company: true },
-      // WHERE (company.name = :search) OR (company.skill = :search)
-      where: [{ company: { name: search } }, { skill: search }],
+      // WHERE (company.name ILIKE '%:search%') OR (company.skill ILIKE '%:search%')
+      // 대소문자 구분 없이 문자열 포함 여부 검색
+      where: [
+        { company: { name: ILike(`%${search}%`) } },
+        { skill: ILike(`%${search}%`) },
+      ],
     });
   }
 
