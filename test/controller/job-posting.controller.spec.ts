@@ -72,6 +72,7 @@ describe('JobPostingController', () => {
 
   it('should be defined', () => {
     expect(jobPostingController).toBeDefined();
+    expect(jobPostingService).toBeDefined();
   });
 
   test('registerJobPosting() : 생성된 채용공고 id를 반환한다.', async () => {
