@@ -172,7 +172,22 @@ describe('JobPostingRepository', () => {
 
   test('findByCompanyId() : company.id가 일치하는 JobPosting id 객체를 반환한다.', async () => {
     // given
+    const testCompanyId: number = 1;
+
+    const mockJobPosting = [{ id: 1 }, { id: 2 }, { id: 3 }] as JobPosting[];
+
+    const findSpy = jest
+      .spyOn(jobPostingRepository, 'find')
+      .mockResolvedValue(mockJobPosting);
+
     // when
+    const found = await jobPostingRepository.findByCompanyId(testCompanyId);
+
     // then
+    expect(findSpy).toHaveBeenCalledWith({
+      select: { id: true },
+      where: { company: { id: testCompanyId } },
+    });
+    expect(found).toEqual(mockJobPosting);
   });
 });
