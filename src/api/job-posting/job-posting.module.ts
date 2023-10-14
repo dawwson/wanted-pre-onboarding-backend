@@ -6,6 +6,7 @@ import { JobPostingService } from './job-posting.service';
 import { UserService } from '../user/user.service';
 import { JobPostingRepository } from '../../repository/job-posting.repository';
 import { UserRepository } from '../../repository/user.repository';
+import { JobApplicationRepository } from '../../repository/job-application.repository';
 
 @Module({
   controllers: [JobPostingController],
@@ -14,6 +15,7 @@ import { UserRepository } from '../../repository/user.repository';
     UserService,
     JobPostingRepository,
     UserRepository,
+    JobApplicationRepository,
   ],
 })
 export class JobPostingModule {}

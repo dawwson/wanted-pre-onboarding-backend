@@ -23,11 +23,11 @@ export class JobApplication extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => JobPosting)
+  @ManyToOne(() => JobPosting, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'job_posting_id' })
   jobPosting: JobPosting;
 
-  @Column({ name: 'job_posting_id' })
+  @Column({ name: 'job_posting_id', nullable: true })
   jobPostingId: number;
 
   @ManyToOne(() => User)
@@ -39,4 +39,8 @@ export class JobApplication extends BaseEntity {
 
   @Column({ default: JobApplicationStatus.APPLIED })
   status: JobApplicationStatus;
+
+  changeToRejected() {
+    this.status = JobApplicationStatus.REJECTED;
+  }
 }
