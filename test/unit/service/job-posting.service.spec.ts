@@ -30,6 +30,7 @@ describe('JobPostingService', () => {
     findWithCompany: jest.fn(),
     findWithCompanyBySearch: jest.fn(),
     findWithCompanyById: jest.fn(),
+    findByCompanyId: jest.fn(),
   };
 
   const mockJobApplicationRepository = {
@@ -408,10 +409,22 @@ describe('JobPostingService', () => {
     });
   });
 
-  test('getAllOfCompany() : id에 해당하는 JobPosting 객체를 반환한다.', async () => {
+  test('getAllOfCompany() : companyId에 해당하는 JobPosting 객체를 반환한다.', async () => {
     // given
+    const testCompanyId: number = 1;
+
+    const mockJobPostings = [{ id: 1 }, { id: 2 }, { id: 3 }] as JobPosting[];
+
+    const findByCompanyIdSpy = jest
+      .spyOn(jobPostingRepository, 'findByCompanyId')
+      .mockResolvedValue(mockJobPostings);
+
     // when
-    // const result = await jobPostingService.getAll();
+    const result = await jobPostingService.getAllOfCompany(testCompanyId);
+
     // then
+    expect(findByCompanyIdSpy).toHaveBeenCalledTimes(1);
+    expect(findByCompanyIdSpy).toHaveBeenCalledWith(testCompanyId);
+    expect(result).toEqual(mockJobPostings);
   });
 });
