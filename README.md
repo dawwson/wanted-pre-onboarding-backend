@@ -420,9 +420,9 @@ Content-Type: application/json
 
 **Response Body**
 
-|Name|Type| Description |Required|  
-|--|:--:|-------------|:--:|
-|id|number| 지원내역 `DB Id`  |O|
+|Name|Type| Description      |Required|  
+|--|:--:|------------------|:--:|
+|id|number| 생성된 지원내역 `DB Id` |O|
 
 **Response Body 예시**
 ```
