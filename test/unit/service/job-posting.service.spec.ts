@@ -1,14 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DeleteResult, UpdateResult } from 'typeorm';
 
+import { PostJobPostingDto } from '../../../src/api/job-posting/controller-dto/post-job-posting.dto';
+import { JobPostingService } from '../../../src/api/job-posting/job-posting.service';
+import { PatchJobPostingDto } from '../../../src/api/job-posting/controller-dto/patch-job-posting.dto';
+import { FindConditionDto } from '../../../src/api/job-posting/service-dto/find-condition.dto';
+
+import { Company } from '../../../src/entity/company.entity';
+import { JobPosting } from '../../../src/entity/job-posting.entity';
+
 import { JobPostingRepository } from '../../../src/repository/job-posting.repository';
 import { JobApplicationRepository } from '../../../src/repository/job-application.repository';
 
-import { PostJobPostingDto } from '../../../src/api/job-posting/controller-dto/post-job-posting.dto';
-import { JobPosting } from '../../../src/entity/job-posting.entity';
-
-import { JobPostingService } from '../../../src/api/job-posting/job-posting.service';
-import { PatchJobPostingDto } from '../../../src/api/job-posting/controller-dto/patch-job-posting.dto';
 import {
   JobApplication,
   JobApplicationStatus,
@@ -23,6 +26,8 @@ describe('JobPostingService', () => {
     save: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    findWithCompany: jest.fn(),
+    findWithCompanyBySearch: jest.fn(),
   };
 
   const mockJobApplicationRepository = {
@@ -226,16 +231,112 @@ describe('JobPostingService', () => {
   describe('getAll()', () => {
     test('검색 조건 없이 모든 JobPosting 객체 배열을 반환한다.', async () => {
       // given
+      const testFindConditionDto = {
+        search: null,
+      } as FindConditionDto;
+
+      const mockJobPostings = [
+        {
+          id: 1,
+          company: {
+            id: 1,
+            name: '원티드',
+            country: '한국',
+            region: '서울',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          } as Company,
+          jobPosition: '개발자',
+          description: '성실한 개발자를 찾습니다!',
+          reward: 10000,
+          skill: 'node.js',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 2,
+          company: {
+            id: 1,
+            name: '원티드',
+            country: '한국',
+            region: '서울',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          } as Company,
+          jobPosition: '디자이너',
+          description: '성실한 디자이너를 찾습니다!',
+          reward: 20000,
+          skill: 'photoshop',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ] as JobPosting[];
+
+      const findWithCompanySpy = jest
+        .spyOn(jobPostingRepository, 'findWithCompany')
+        .mockResolvedValue(mockJobPostings);
+
       // when
-      // const result = await jobPostingService.getAll();
+      const result = await jobPostingService.getAll(testFindConditionDto);
+
       // then
+      expect(findWithCompanySpy).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockJobPostings);
     });
 
     test('검색 조건 포함 모든 JobPosting 객체 배열을 반환한다.', async () => {
       // given
+      const testFindConditionDto = {
+        search: '원',
+      } as FindConditionDto;
+
+      const mockJobPostings = [
+        {
+          id: 1,
+          company: {
+            id: 1,
+            name: '원티드',
+            country: '한국',
+            region: '서울',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          } as Company,
+          jobPosition: '개발자',
+          description: '성실한 개발자를 찾습니다!',
+          reward: 10000,
+          skill: 'node.js',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 2,
+          company: {
+            id: 1,
+            name: '원티드',
+            country: '한국',
+            region: '서울',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          } as Company,
+          jobPosition: '디자이너',
+          description: '성실한 디자이너를 찾습니다!',
+          reward: 20000,
+          skill: 'photoshop',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ] as JobPosting[];
+
+      const findWithCompanyBySearchSpy = jest
+        .spyOn(jobPostingRepository, 'findWithCompanyBySearch')
+        .mockResolvedValue(mockJobPostings);
+
       // when
-      // const result = await jobPostingService.getAll();
+      const result = await jobPostingService.getAll(testFindConditionDto);
+
       // then
+      expect(findWithCompanyBySearchSpy).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockJobPostings);
     });
   });
 
