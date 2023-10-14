@@ -73,9 +73,33 @@ Test : 테스트 코드 추가 및 수정
 - ➕ 기업 회원은 채용공고의 채용 포지션, 채용 내용, 채용 보상금, 사용 기술을 수정할 수 있다.
 - ➕ 채용공고는 회사 이름, 사용 기술로 검색할 수 있다.
 
-## 📝 ERD 설계(작성중...)
+<br>
 
-## 📝 REST API 설계(작성중...)
+---
+
+<br>
+
+## 📝 ERD 설계
+### 개념적 데이터 모델링
+<img width="1267" alt="스크린샷 2023-10-14 오후 10 21 10" src="https://github.com/dawwson/wanted-pre-onboarding-backend/assets/45624238/354cecc5-61f1-4d93-bae9-8be86dabb86b">
+
+---
+
+### 엔티티 분석 
+<img width="920" alt="스크린샷 2023-10-14 오후 10 19 02" src="https://github.com/dawwson/wanted-pre-onboarding-backend/assets/45624238/a52ae449-6913-4a12-8431-8afd8cedb022">
+
+---
+
+### 최종 ERD
+![image](https://github.com/dawwson/wanted-pre-onboarding-backend/assets/45624238/e0b6f357-a48c-44e7-a139-46a2bb55ed7a)
+
+<br>
+
+---
+
+<br>
+
+## 📝 REST API 설계
 ### 주요 상태 코드
 |         **HTTP 상태코드**         | **설명**                                                               |
 |:-----------------------------:|----------------------------------------------------------------------|
@@ -460,4 +484,8 @@ test
     └── service
 ```
 
+### 상세 구현 과정 - 설계
+
 ## 테스트 결과
+### 단위 테스트 결과
+<img width="338" alt="스크린샷 2023-10-14 오후 10 30 10" src="https://github.com/dawwson/wanted-pre-onboarding-backend/assets/45624238/73580950-6e56-40a3-b8ca-d06db0d6272a">
