@@ -14,9 +14,9 @@ export class AuthMiddleware implements NestMiddleware {
 
   async use(req: RequestWithUser, res: Response, next: NextFunction) {
     // NOTE: < Authorization: userId=xxx > 형식의 헤더 검증
+    // 이 헤더 값의 유효성 검증은 생략함.
     const authorization = req.headers['authorization'];
     const userId = parseInt(authorization.split(' ')[1]);
-    // TODO: authorization에 대한 유효성 검사
 
     const user = await this.userService.getOne(userId);
     if (!user) {
