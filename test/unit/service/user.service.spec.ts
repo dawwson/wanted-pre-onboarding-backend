@@ -26,7 +26,7 @@ describe('UserService', () => {
         },
         {
           provide: JobPostingRepository,
-          useValue: Repository,
+          useClass: Repository,
         },
       ],
     }).compile();

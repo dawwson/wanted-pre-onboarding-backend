@@ -52,15 +52,15 @@ describe('JobPostingController', () => {
         },
         {
           provide: getRepositoryToken(JobPostingRepository),
-          useValue: Repository,
+          useClass: Repository,
         },
         {
           provide: getRepositoryToken(CompanyRepository),
-          useValue: Repository,
+          useClass: Repository,
         },
         {
           provide: getRepositoryToken(UserRepository),
-          useValue: Repository,
+          useClass: Repository,
         },
       ],
     }).compile();
