@@ -13,7 +13,7 @@ export class User extends BaseEntity {
   id: number;
 
   @OneToOne(() => Company, (company) => company.manager, { lazy: true })
-  company: Company;
+  company: Promise<Company>;
 
   @Column()
   email: string;

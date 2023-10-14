@@ -37,7 +37,8 @@ export class JobPostingController {
     @Body() postJobPostingDto: PostJobPostingDto,
   ) {
     const newJobPosting = await this.jobPostingService.register(
-      req.user.id,
+      // NOTE: lazy loading
+      (await req.user.company).id,
       postJobPostingDto,
     );
     return {

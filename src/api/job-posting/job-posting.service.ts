@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { JobPosting } from '../../entity/job-posting.entity';
 import { JobPostingRepository } from '../../repository/job-posting.repository';
-import { CompanyRepository } from '../../repository/company.repository';
 
 import { PostJobPostingDto } from './controller-dto/post-job-posting.dto';
 import { PatchJobPostingDto } from './controller-dto/patch-job-posting.dto';
@@ -12,19 +11,14 @@ import { FindConditionDto } from './service-dto/find-condition.dto';
 
 @Injectable()
 export class JobPostingService {
-  constructor(
-    private readonly jobPostingRepository: JobPostingRepository,
-    private readonly companyRepository: CompanyRepository,
-  ) {}
+  constructor(private readonly jobPostingRepository: JobPostingRepository) {}
 
   async register(
-    userId: number,
+    companyId: number,
     postJobPostingDto: PostJobPostingDto,
   ): Promise<JobPosting> {
-    // 채용공고를 올릴 회사 조회
-    const company = await this.companyRepository.findByManagerId(userId);
     // JobPosting 객체 생성
-    const jobPostingToSave = JobPosting.create(company, postJobPostingDto);
+    const jobPostingToSave = JobPosting.create(companyId, postJobPostingDto);
     // DB에 저장
     return this.jobPostingRepository.save(jobPostingToSave);
   }

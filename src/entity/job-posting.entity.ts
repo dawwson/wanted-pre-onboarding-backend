@@ -18,6 +18,9 @@ export class JobPosting extends BaseEntity {
   @JoinColumn({ name: 'company_id' })
   company: Company;
 
+  @Column({ name: 'company_id' })
+  companyId: number;
+
   @Column({ name: 'job_position' })
   jobPosition: string;
 
@@ -35,9 +38,9 @@ export class JobPosting extends BaseEntity {
    * @param company
    * @param postJobPostingDto
    */
-  static create(company: Company, postJobPostingDto: PostJobPostingDto) {
+  static create(companyId: number, postJobPostingDto: PostJobPostingDto) {
     const jobPosting = new JobPosting();
-    jobPosting.company = company;
+    jobPosting.companyId = companyId;
     jobPosting.jobPosition = postJobPostingDto.jobPosition;
     jobPosting.description = postJobPostingDto.description;
     jobPosting.reward = postJobPostingDto.reward;
