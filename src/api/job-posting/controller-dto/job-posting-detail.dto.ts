@@ -1,4 +1,4 @@
-import { Exclude, Expose, plainToInstance } from 'class-transformer';
+import { Exclude, Expose, plainToInstance, Transform } from 'class-transformer';
 import { JobPosting } from '../../../entity/job-posting.entity';
 import { Company } from '../../../entity/company.entity';
 
@@ -7,7 +7,12 @@ export class JobPostingDetailDto {
   @Expose()
   id: number;
 
-  @Expose()
+  @Expose({ name: 'company' })
+  @Transform(({ value }) => {
+    // 생성일, 수정일 제외하도록 값 변환
+    const { createdAt, updatedAt, ...rest } = value;
+    return rest;
+  })
   company: Partial<Company>;
 
   @Expose()
