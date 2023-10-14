@@ -484,15 +484,17 @@ test
     └── service
 ```
 
-### 상세 구현 과정
-#### 코드 설계
+## 💬 상세 구현 과정
+### 코드 설계
 - 요청 -> 인증 미들웨어`AuthMiddleware` -> `Role` 가드`RolesGuard` -> `Controller` -> `Service` -> `Repository` -> `Database` -> `Service` -> `Controller` -> 응답
 - 인증 미들웨어
   - 사용자 인증
   - 요청 객체에 사용자 데이터 붙여서 `Role` 가드로 전달
+  - `Authorization` 헤더에 포함된 회원 `DB Id`가 존재하는지 여부만 판단함
 - `Role` 가드
   - 사용자 인가
   - `Controller` 계층 접근 가능 여부 판단
+  - `Controller`의 각 엔드포인트에 있는 `@Roles()` 데코레이터 파라미터 값으로 판단함
 - `Controller` 계층
   - 입력 유효성 검증
   - `Service` 계층의 입력 모델로 매핑
@@ -505,15 +507,18 @@ test
 - `Repository`
   - 데이터베이스 접근
 
-#### 테스트
-- 단위 테스트 코드 작성
-  - `Controller`, `Service`, `Repository` 각각에서 필요한 의존성을 모킹하여 `DB` 연결하지 않고 테스트 진행
-  - 결과  
-    <img width="338" alt="스크린샷 2023-10-14 오후 10 30 10" src="https://github.com/dawwson/wanted-pre-onboarding-backend/assets/45624238/73580950-6e56-40a3-b8ca-d06db0d6272a">
-- `API` 요청 테스트 : `Insomnia`, `TablePlus` 사용하여 로컬 환경에서 API 테스트 진행
-  - 결과  
-![GIFMaker_me (1)](https://github.com/dawwson/spring-core-study/assets/45624238/abc02993-cda7-45c0-8d06-57403aa9e4bc)
+### 테스트
+#### 1. 단위 테스트 코드 작성
+- `Controller`, `Service`, `Repository` 각각에서 필요한 의존성을 모킹하여 `DB` 연결하지 않고 테스트 진행
 
+**결과**  
+  <img width="338" alt="스크린샷 2023-10-14 오후 10 30 10" src="https://github.com/dawwson/wanted-pre-onboarding-backend/assets/45624238/73580950-6e56-40a3-b8ca-d06db0d6272a">
+
+#### 2. `API` 요청 테스트
+- 로컬 환경에서 `Insomnia`로 API 요청, `TablePlus`로 DB 데이터 변화 확인
+
+**결과**  
+![무제](https://github.com/dawwson/wanted-pre-onboarding-backend/assets/45624238/5caed2d0-440c-46bf-b23f-fbbcb09488b0)
 
 
 
