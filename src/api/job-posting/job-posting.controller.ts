@@ -86,7 +86,7 @@ export class JobPostingController {
     const jobPosting = await this.jobPostingService.getOne(+id);
     // 2. 현재 채용공고의 회사에서 올린 다른 채용공고 조회
     const jobPostingsOfCompany = await this.jobPostingService.getAllOfCompany(
-      jobPosting['__company__'].id, // NOTE: lazy 로딩으로 인해 __company__로 변환됨
+      jobPosting.company.id,
     );
 
     return {
