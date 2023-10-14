@@ -40,6 +40,13 @@ export class JobApplication extends BaseEntity {
   @Column({ default: JobApplicationStatus.APPLIED })
   status: JobApplicationStatus;
 
+  static create(applicantId: number, jobPostingId: number) {
+    const jobApplication = new JobApplication();
+    jobApplication.applicantId = applicantId;
+    jobApplication.jobPostingId = jobPostingId;
+    return jobApplication;
+  }
+
   changeToRejected() {
     this.status = JobApplicationStatus.REJECTED;
   }

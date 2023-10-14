@@ -13,10 +13,7 @@ export class JobApplicationService {
     applicantId: number,
     jobPostingId: number,
   ): Promise<JobApplication> {
-    // TODO: 엔티티 안으로 이동
-    const jobApplication = new JobApplication();
-    jobApplication.applicantId = applicantId;
-    jobApplication.jobPostingId = jobPostingId;
+    const jobApplication = JobApplication.create(applicantId, jobPostingId);
 
     try {
       return await this.jobApplicationRepository.save(jobApplication);
