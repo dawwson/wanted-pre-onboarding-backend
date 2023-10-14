@@ -7,8 +7,7 @@ export class JobPostingDetailDto {
   @Expose()
   id: number;
 
-  // __company__ => company로 변환
-  @Expose({ name: '__company__' })
+  @Expose()
   company: Partial<Company>;
 
   @Expose()
