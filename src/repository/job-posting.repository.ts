@@ -11,10 +11,6 @@ export class JobPostingRepository extends Repository<JobPosting> {
 
   findWithCompany(): Promise<JobPosting[]> {
     return this.find({
-      // SELECT company.id, company.name, company.country, company.region
-      select: {
-        company: { id: true, name: true, country: true, region: true },
-      },
       // LEFT JOIN company ON company.id = job_posting.company_id
       relations: { company: true },
     });
