@@ -7,6 +7,8 @@ import { PostJobPostingDto } from '../../../src/api/job-posting/controller-dto/p
 import { JobPosting } from '../../../src/entity/job-posting.entity';
 
 import { JobPostingService } from '../../../src/api/job-posting/job-posting.service';
+import { PatchJobPostingDto } from '../../../src/api/job-posting/controller-dto/patch-job-posting.dto';
+import { UpdateResult } from 'typeorm/query-builder/result/UpdateResult';
 
 describe('JobPostingService', () => {
   let jobPostingService: JobPostingService;
@@ -15,6 +17,7 @@ describe('JobPostingService', () => {
 
   const mockJobPostingRepository = {
     save: jest.fn(),
+    update: jest.fn(),
   };
 
   const mockJobApplicationRepository = {
@@ -88,9 +91,32 @@ describe('JobPostingService', () => {
 
   test('update() : 수정된 JobPosting의 수를 반환한다.', async () => {
     // given
+    const testJobPostingId: number = 1;
+
+    const testPatchJobPostingDto = {
+      jobPosition: '수정할 채용 포지션',
+      description: '수정할 채용 내용',
+      reward: 20000,
+      skill: '수정할 사용 기술',
+    } as PatchJobPostingDto;
+
+    const mockUpdateResult = {
+      affected: 1,
+    } as UpdateResult;
+
+    const updateSpy = jest
+      .spyOn(jobPostingRepository, 'update')
+      .mockResolvedValue(mockUpdateResult);
+
     // when
-    // const result = await jobPostingService.update();
+    const result = await jobPostingService.update(
+      testJobPostingId,
+      testPatchJobPostingDto,
+    );
+
     // then
+    expect(updateSpy).toHaveBeenCalledTimes(1);
+    expect(result.affected).toBe(1);
   });
 
   test('remove() : 삭제된 JobPosting의 수를 반환한다.', async () => {
