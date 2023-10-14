@@ -484,8 +484,31 @@ test
     └── service
 ```
 
-### 상세 구현 과정 - 설계
+### 상세 구현 과정
+#### 코드 설계
+- 요청 -> 인증 미들웨어`AuthMiddleware` -> `Role` 가드`RolesGuard` -> `Controller` -> `Service` -> `Repository` -> `Database` -> `Service` -> `Controller` -> 응답
+- 인증 미들웨어
+  - 사용자 인증
+  - 요청 객체에 사용자 데이터 붙여서 `Role` 가드로 전달
+- `Role` 가드
+  - 사용자 인가
+  - `Controller` 계층 접근 가능 여부 판단
+- `Controller` 계층
+  - 입력 유효성 검증
+  - `Service` 계층의 입력 모델로 매핑
+  - `Service` 호출
+  - `Service`의 출력을 `HTTP`로 매핑
+  - `HTTP` 응답을 반환
+- `Service`
+  - 핵심 비즈니스 로직 포함
+  - `Repository` 호출
+- `Repository`
+  - 데이터베이스 접근
 
-## 테스트 결과
-### 단위 테스트 결과
-<img width="338" alt="스크린샷 2023-10-14 오후 10 30 10" src="https://github.com/dawwson/wanted-pre-onboarding-backend/assets/45624238/73580950-6e56-40a3-b8ca-d06db0d6272a">
+#### 테스트
+- 단위 테스트 코드 작성
+  - `Controller`, `Service`, `Repository` 각각에서 필요한 의존성을 모킹하여 `DB` 연결하지 않고 테스트 진행
+  - 단위 테스트 결과  
+    <img width="338" alt="스크린샷 2023-10-14 오후 10 30 10" src="https://github.com/dawwson/wanted-pre-onboarding-backend/assets/45624238/73580950-6e56-40a3-b8ca-d06db0d6272a">
+- `API` 요청 테스트 : `Insomnia`, `TablePlus` 사용하여 로컬 환경에서 API 테스트 진행
+
