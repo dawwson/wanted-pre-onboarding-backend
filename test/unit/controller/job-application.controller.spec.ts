@@ -62,10 +62,12 @@ describe('JobApplicationController', () => {
     const registerSpy = jest
       .spyOn(jobApplicationService, 'register')
       .mockResolvedValue({
-        id: testJobApplicationId,
-        jobPostingId: testJobPostingId,
+        id: 3,
         applicantId: testApplicantId,
+        jobPostingId: testJobPostingId,
         status: JobApplicationStatus.APPLIED,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       } as JobApplication);
 
     // when

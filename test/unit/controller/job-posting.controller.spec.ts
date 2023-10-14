@@ -59,33 +59,39 @@ describe('JobPostingController', () => {
 
   test('registerJobPosting() : 생성된 채용공고 id를 반환한다.', async () => {
     // given
-    // 1. 테스트 채용공고 Id
+    // 1. 테스트 채용공고 id
     const testJobPostingId: number = 1;
-
     // 2. 테스트 Request 객체
     const testRequest = {
       user: { id: 1, company: Promise.resolve({ id: 1 }) },
     } as RequestWithUser;
 
     // 3. 테스트 요청 DTO 객체
-    const testDto = {
-      jobPosition: 'test position',
-      description: 'test description',
-      reward: 10000,
-      skill: 'test skill',
+    const testPostJobPostingDto = {
+      jobPosition: '백엔드 개발자',
+      description: '채용 서비스를 개발합니다!',
+      reward: 1000000,
+      skill: 'nodejs',
     } as PostJobPostingDto;
 
-    // 4. Service 레이어 Mocking(Mock 데이터로 필요한 값을 반환한다고 가정함)
+    // 4. Service 레이어 Mocking
     const registerSpy = jest
       .spyOn(jobPostingService, 'register')
       .mockResolvedValue({
         id: testJobPostingId,
+        companyId: 1,
+        jobPosition: '백엔드 개발자',
+        description: '채용 서비스를 개발합니다!',
+        reward: 1000000,
+        skill: 'nodejs',
+        createdAt: new Date(),
+        updatedAt: new Date(),
       } as JobPosting);
 
     // when
     const response = await jobPostingController.registerJobPosting(
       testRequest,
-      testDto,
+      testPostJobPostingDto,
     );
 
     // then
@@ -96,7 +102,7 @@ describe('JobPostingController', () => {
 
   test('updateJobPosting() : 수정된 채용공고 id를 반환한다.', async () => {
     // given
-    // 1. 테스트 채용공고 Id
+    // 1. 테스트 JobPosting Id
     const testJobPostingId: string = '1';
 
     // 2. 테스트 Request 객체
@@ -105,14 +111,14 @@ describe('JobPostingController', () => {
     } as RequestWithUser;
 
     // 3. 테스트 요청 DTO 객체
-    const testDto = {
+    const testPatchJobPostingDto = {
       jobPosition: '수정할 채용 포지션',
       description: '수정할 채용 내용',
       reward: 10000,
       skill: '수정할 사용 기술',
     } as PatchJobPostingDto;
 
-    // 4. Service 레이어 Mocking(Mock 데이터로 필요한 값을 반환한다고 가정함)
+    // 4. Service 레이어 Mocking
     const updateSpy = jest
       .spyOn(jobPostingService, 'update')
       .mockResolvedValue({
@@ -123,7 +129,7 @@ describe('JobPostingController', () => {
     const response = await jobPostingController.updateJobPosting(
       testRequest,
       testJobPostingId,
-      testDto,
+      testPatchJobPostingDto,
     );
 
     // then
@@ -160,109 +166,131 @@ describe('JobPostingController', () => {
     expect(response).toBeUndefined();
   });
 
-  test('getAllJobPostings() : 채용 공고 리스트를 반환한다. - 검색 X', async () => {
-    // given
-    // Service 레이어 Mocking(Mock 데이터로 필요한 값을 반환한다고 가정함)
-    const getAllSpy = jest
-      .spyOn(jobPostingService, 'getAll')
-      .mockResolvedValue([
-        {
-          id: 1,
-          company: {
+  describe('getAllJobPostings()', () => {
+    test('getAllJobPostings() : 채용 공고 리스트를 반환한다. - 검색 X', async () => {
+      // given
+      // Service 레이어 Mocking(Mock 데이터로 필요한 값을 반환한다고 가정함)
+      const getAllSpy = jest
+        .spyOn(jobPostingService, 'getAll')
+        .mockResolvedValue([
+          {
             id: 1,
-            name: '원티드',
-            country: '한국',
-            region: '서울',
-          } as Company,
-          jobPosition: '백엔드 개발자',
-          reward: 10000,
-          skill: 'javascript',
-        },
-        {
-          id: 2,
-          company: {
-            id: 1,
-            name: '투티드',
-            country: '한국',
-            region: '서울',
-          } as Company,
-          jobPosition: '프론트엔드 개발자',
-          reward: 20000,
-          skill: 'nodejs',
-        },
-      ] as JobPosting[]);
+            company: {
+              id: 1,
+              name: '원티드',
+              country: '한국',
+              region: '서울',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            } as Company,
+            jobPosition: '개발자',
+            description: '성실한 개발자를 찾습니다!',
+            reward: 10000,
+            skill: 'node.js',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+          {
+            id: 2,
+            company: {
+              id: 1,
+              name: '원티드',
+              country: '한국',
+              region: '서울',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            } as Company,
+            jobPosition: '디자이너',
+            description: '성실한 디자이너를 찾습니다!',
+            reward: 20000,
+            skill: 'photoshop',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        ] as JobPosting[]);
 
-    // when
-    const response = await jobPostingController.getAllJobPostings();
+      // when
+      const response = await jobPostingController.getAllJobPostings();
 
-    // then
-    expect(getAllSpy).toHaveBeenCalled();
-    expect(response.message).toBeDefined();
-    // 프로퍼티 key와 value 타입 검증
-    response.jobPostings.forEach((jp) => {
-      expect(jp).toMatchObject({
-        id: expect.any(Number),
-        companyName: expect.any(String),
-        companyCountry: expect.any(String),
-        companyRegion: expect.any(String),
-        jobPosition: expect.any(String),
-        reward: expect.any(Number),
-        skill: expect.any(String),
+      // then
+      expect(getAllSpy).toHaveBeenCalled();
+      expect(response.message).toBeDefined();
+      // 프로퍼티 key와 value 타입 검증
+      response.jobPostings.forEach((jp) => {
+        expect(jp).toMatchObject({
+          id: expect.any(Number),
+          companyName: expect.any(String),
+          companyCountry: expect.any(String),
+          companyRegion: expect.any(String),
+          jobPosition: expect.any(String),
+          reward: expect.any(Number),
+          skill: expect.any(String),
+        });
       });
     });
-  });
 
-  test('getAllJobPostings() : 채용 공고 리스트를 반환한다. - 검색 O', async () => {
-    // given
-    // 1. 테스트 검색 내용
-    const testSearch = '원';
-    // 2. Service 레이어 Mocking(Mock 데이터로 필요한 값을 반환한다고 가정함)
-    const getAllSpy = jest
-      .spyOn(jobPostingService, 'getAll')
-      .mockResolvedValue([
-        {
-          id: 1,
-          company: {
+    test('채용 공고 리스트를 반환한다. - 검색 O', async () => {
+      // given
+      // 1. 테스트 검색 내용
+      const testSearch = '원';
+      // 2. Service 레이어 Mocking(Mock 데이터로 필요한 값을 반환한다고 가정함)
+      const getAllSpy = jest
+        .spyOn(jobPostingService, 'getAll')
+        .mockResolvedValue([
+          {
             id: 1,
-            name: '원티드',
-            country: '한국',
-            region: '서울',
-          } as Company,
-          jobPosition: '백엔드 개발자',
-          reward: 10000,
-          skill: 'javascript',
-        },
-        {
-          id: 2,
-          company: {
-            id: 1,
-            name: '원티드',
-            country: '한국',
-            region: '서울',
-          } as Company,
-          jobPosition: '프론트엔드 개발자',
-          reward: 20000,
-          skill: 'nodejs',
-        },
-      ] as JobPosting[]);
+            company: {
+              id: 1,
+              name: '원티드',
+              country: '한국',
+              region: '서울',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            } as Company,
+            jobPosition: '개발자',
+            description: '성실한 개발자를 찾습니다!',
+            reward: 10000,
+            skill: 'node.js',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+          {
+            id: 2,
+            company: {
+              id: 1,
+              name: '원티드',
+              country: '한국',
+              region: '서울',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            } as Company,
+            jobPosition: '디자이너',
+            description: '성실한 디자이너를 찾습니다!',
+            reward: 20000,
+            skill: 'photoshop',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        ] as JobPosting[]);
 
-    // when
-    const response = await jobPostingController.getAllJobPostings(testSearch);
+      // when
+      const response = await jobPostingController.getAllJobPostings(testSearch);
 
-    // then
-    expect(getAllSpy).toHaveBeenCalled();
-    expect(response.message).toBeDefined();
-    // 프로퍼티 key와 value 타입 검증
-    response.jobPostings.forEach((jp) => {
-      expect(jp).toMatchObject({
-        id: expect.any(Number),
-        // 검색 내용이 들어가 있는지 검증
-        companyName: expect.stringContaining(testSearch),
-        companyCountry: expect.any(String),
-        companyRegion: expect.any(String),
-        jobPosition: expect.any(String),
-        reward: expect.any(Number),
-        skill: expect.any(String),
+      // then
+      expect(getAllSpy).toHaveBeenCalled();
+      expect(response.message).toBeDefined();
+      // 프로퍼티 key와 value 타입 검증
+      response.jobPostings.forEach((jp) => {
+        expect(jp).toMatchObject({
+          id: expect.any(Number),
+          // 검색 내용이 들어가 있는지 검증
+          companyName: expect.stringContaining(testSearch),
+          companyCountry: expect.any(String),
+          companyRegion: expect.any(String),
+          jobPosition: expect.any(String),
+          reward: expect.any(Number),
+          skill: expect.any(String),
+        });
       });
     });
   });
@@ -278,17 +306,21 @@ describe('JobPostingController', () => {
     const getOneSpy = jest
       .spyOn(jobPostingService, 'getOne')
       .mockResolvedValue({
-        id: 1,
+        id: +testJobPostingId,
         company: {
           id: 1,
           name: '원티드',
           country: '한국',
           region: '서울',
+          createdAt: new Date(),
+          updatedAt: new Date(),
         } as Company,
-        jobPosition: '백엔드 개발자',
-        description: '채용서비스 백엔드를 개발합니다!',
+        jobPosition: '개발자',
+        description: '성실한 개발자를 찾습니다!',
         reward: 10000,
-        skill: 'javascript',
+        skill: 'node.js',
+        createdAt: new Date(),
+        updatedAt: new Date(),
       } as JobPosting);
 
     const getAllOfCompanySpy = jest

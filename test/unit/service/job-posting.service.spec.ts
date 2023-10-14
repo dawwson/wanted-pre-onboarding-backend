@@ -82,7 +82,7 @@ describe('JobPostingService', () => {
     };
 
     const mockJobPosting = {
-      id: testUserId,
+      id: 1,
       companyId: 1,
       jobPosition: '백엔드 개발자',
       description: '채용 서비스를 개발합니다!',
