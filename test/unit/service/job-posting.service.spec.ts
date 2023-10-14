@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { DeleteResult, UpdateResult } from 'typeorm';
 
 import { JobPostingRepository } from '../../../src/repository/job-posting.repository';
 import { JobApplicationRepository } from '../../../src/repository/job-application.repository';
@@ -8,7 +9,10 @@ import { JobPosting } from '../../../src/entity/job-posting.entity';
 
 import { JobPostingService } from '../../../src/api/job-posting/job-posting.service';
 import { PatchJobPostingDto } from '../../../src/api/job-posting/controller-dto/patch-job-posting.dto';
-import { UpdateResult } from 'typeorm/query-builder/result/UpdateResult';
+import {
+  JobApplication,
+  JobApplicationStatus,
+} from '../../../src/entity/job-application.entity';
 
 describe('JobPostingService', () => {
   let jobPostingService: JobPostingService;
@@ -18,11 +22,17 @@ describe('JobPostingService', () => {
   const mockJobPostingRepository = {
     save: jest.fn(),
     update: jest.fn(),
+    delete: jest.fn(),
   };
 
   const mockJobApplicationRepository = {
     findAppliedByJobPostingId: jest.fn(),
+    save: jest.fn(),
   };
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -119,11 +129,98 @@ describe('JobPostingService', () => {
     expect(result.affected).toBe(1);
   });
 
-  test('remove() : 삭제된 JobPosting의 수를 반환한다.', async () => {
-    // given
-    // when
-    // const result = await jobPostingService.remove();
-    // then
+  describe('remove()', () => {
+    test('삭제된 JobPosting의 수를 반환한다. - 연관된 JobApplication이 없는 경우', async () => {
+      // given
+      const testJobPostingId: number = 1;
+
+      const mockAppliedJobApplications = [];
+
+      const findAppliedByJobPostingIdSpy = jest
+        .spyOn(jobApplicationRepository, 'findAppliedByJobPostingId')
+        .mockResolvedValue(mockAppliedJobApplications);
+
+      const mockDeleteResult = {
+        affected: 1,
+      } as DeleteResult;
+
+      const deleteSpy = jest
+        .spyOn(jobPostingRepository, 'delete')
+        .mockResolvedValue(mockDeleteResult);
+
+      // when
+      const result = await jobPostingService.remove(testJobPostingId);
+
+      // then
+      expect(findAppliedByJobPostingIdSpy).toHaveBeenCalledTimes(1);
+      expect(findAppliedByJobPostingIdSpy).toHaveBeenCalledWith(
+        testJobPostingId,
+      );
+
+      expect(deleteSpy).toHaveBeenCalledTimes(1);
+      expect(deleteSpy).toHaveBeenCalledWith(testJobPostingId);
+
+      expect(result.affected).toBe(1);
+
+      // 아래 테스트에 영향을 주지 않기 위해 spy 모킹 해제
+      findAppliedByJobPostingIdSpy.mockRestore();
+      deleteSpy.mockRestore();
+    });
+
+    test('remove() : 삭제된 JobPosting의 수를 반환한다. - 연관된 JobApplication이 있는 경우', async () => {
+      // given
+      const testJobPostingId: number = 1;
+
+      const mockAppliedJobApplications = [
+        {
+          id: 2,
+          jobPostingId: testJobPostingId,
+          applicantId: 3,
+          status: JobApplicationStatus.APPLIED,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          changeToRejected: () => {},
+        },
+        {
+          id: 4,
+          jobPostingId: testJobPostingId,
+          applicantId: 5,
+          status: JobApplicationStatus.APPLIED,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          changeToRejected: () => {},
+        },
+      ] as JobApplication[];
+
+      const findAppliedByJobPostingIdSpy = jest
+        .spyOn(jobApplicationRepository, 'findAppliedByJobPostingId')
+        .mockResolvedValue(mockAppliedJobApplications);
+
+      const saveSpy = jest.spyOn(jobApplicationRepository, 'save');
+
+      const deleteSpy = jest
+        .spyOn(jobPostingRepository, 'delete')
+        .mockResolvedValue({
+          affected: 1,
+        } as DeleteResult);
+
+      // when
+      const result = await jobPostingService.remove(testJobPostingId);
+
+      // then
+      expect(findAppliedByJobPostingIdSpy).toHaveBeenCalledTimes(1);
+      expect(findAppliedByJobPostingIdSpy).toHaveBeenCalledWith(
+        testJobPostingId,
+      );
+
+      expect(saveSpy).toHaveBeenCalledTimes(1);
+      expect(saveSpy).toHaveBeenCalledWith(mockAppliedJobApplications);
+
+      expect(deleteSpy).toHaveBeenCalledTimes(1);
+      expect(deleteSpy).toHaveBeenCalledWith(testJobPostingId);
+
+      expect(result.affected).toBe(1);
+    });
   });
 
   describe('getAll()', () => {

@@ -9,6 +9,7 @@ import { PatchJobPostingDto } from './controller-dto/patch-job-posting.dto';
 import { UpdateResultDto } from './service-dto/update-result.dto';
 import { DeleteResultDto } from './service-dto/delete-result.dto';
 import { FindConditionDto } from './service-dto/find-condition.dto';
+import { JobApplication } from '../../entity/job-application.entity';
 
 @Injectable()
 export class JobPostingService {
@@ -45,7 +46,9 @@ export class JobPostingService {
 
     // 지원 완료 상태인 지원 내역이 있으면 불합격 처리
     if (appliedJobApplications.length > 0) {
-      appliedJobApplications.forEach((ja) => ja.changeToRejected());
+      appliedJobApplications.forEach((ja: JobApplication) =>
+        ja.changeToRejected(),
+      );
       await this.jobApplicationRepository.save(appliedJobApplications);
     }
     // 채용공고 삭제
