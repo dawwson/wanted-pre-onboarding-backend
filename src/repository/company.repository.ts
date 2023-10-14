@@ -8,8 +8,4 @@ export class CompanyRepository extends Repository<Company> {
   constructor(dataSource: DataSource) {
     super(Company, dataSource.createEntityManager());
   }
-
-  findByManagerId(managerId: number) {
-    return this.findOneBy({ manager: { id: managerId } });
-  }
 }
