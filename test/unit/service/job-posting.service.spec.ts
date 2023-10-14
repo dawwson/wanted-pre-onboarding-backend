@@ -16,6 +16,7 @@ import {
   JobApplication,
   JobApplicationStatus,
 } from '../../../src/entity/job-application.entity';
+import { NotFoundException } from '@nestjs/common';
 
 describe('JobPostingService', () => {
   let jobPostingService: JobPostingService;
@@ -28,6 +29,7 @@ describe('JobPostingService', () => {
     delete: jest.fn(),
     findWithCompany: jest.fn(),
     findWithCompanyBySearch: jest.fn(),
+    findWithCompanyById: jest.fn(),
   };
 
   const mockJobApplicationRepository = {
@@ -167,7 +169,7 @@ describe('JobPostingService', () => {
 
       expect(result.affected).toBe(1);
 
-      // 아래 테스트에 영향을 주지 않기 위해 spy 모킹 해제
+      // 다음 테스트에 영향을 주지 않기 위해 spy 모킹 해제
       findAppliedByJobPostingIdSpy.mockRestore();
       deleteSpy.mockRestore();
     });
@@ -343,16 +345,66 @@ describe('JobPostingService', () => {
   describe('getOne()', () => {
     test('getOne() : id에 해당하는 JobPosting 객체를 반환한다.', async () => {
       // given
+      const testJobPostingId: number = 1;
+
+      const mockJobPosting = {
+        id: testJobPostingId,
+        company: {
+          id: 1,
+          name: '원티드',
+          country: '한국',
+          region: '서울',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        } as Company,
+        jobPosition: '개발자',
+        description: '성실한 개발자를 찾습니다!',
+        reward: 10000,
+        skill: 'node.js',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as JobPosting;
+
+      const findWithCompanyByIdSpy = jest
+        .spyOn(jobPostingRepository, 'findWithCompanyById')
+        .mockResolvedValue(mockJobPosting);
+
       // when
-      // const result = await jobPostingService.getOne();
+      const result = await jobPostingService.getOne(testJobPostingId);
+
       // then
+      expect(findWithCompanyByIdSpy).toHaveBeenCalledTimes(1);
+      expect(findWithCompanyByIdSpy).toHaveBeenCalledWith(testJobPostingId);
+
+      expect(result).toEqual(mockJobPosting);
+
+      // 다음 테스트에 영향을 주지 않기 위해 spy 모킹 해제
+      findWithCompanyByIdSpy.mockRestore();
     });
 
     test('getOne() : JobPosting이 없으면 에러가 발생한다.', async () => {
       // given
-      // when
-      // const result = await jobPostingService.getOne();
-      // then
+      const testJobPostingId: number = 1; // 존재하지 않는 id라고 가정
+
+      const mockJobPosting = null;
+
+      const findWithCompanyByIdSpy = jest
+        .spyOn(jobPostingRepository, 'findWithCompanyById')
+        .mockResolvedValue(mockJobPosting);
+
+      try {
+        // when
+        await jobPostingService.getOne(testJobPostingId);
+      } catch (error) {
+        // then
+        // 1. NotFoundException이 발생하는지 확인
+        expect(error).toBeInstanceOf(NotFoundException);
+        // 2. 에러 메시지를 확인
+        expect(error.message).toBeDefined();
+
+        expect(findWithCompanyByIdSpy).toHaveBeenCalledTimes(1);
+        expect(findWithCompanyByIdSpy).toHaveBeenCalledWith(testJobPostingId);
+      }
     });
   });
 
