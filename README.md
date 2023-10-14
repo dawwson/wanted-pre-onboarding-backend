@@ -508,7 +508,14 @@ test
 #### 테스트
 - 단위 테스트 코드 작성
   - `Controller`, `Service`, `Repository` 각각에서 필요한 의존성을 모킹하여 `DB` 연결하지 않고 테스트 진행
-  - 단위 테스트 결과  
+  - 결과  
     <img width="338" alt="스크린샷 2023-10-14 오후 10 30 10" src="https://github.com/dawwson/wanted-pre-onboarding-backend/assets/45624238/73580950-6e56-40a3-b8ca-d06db0d6272a">
 - `API` 요청 테스트 : `Insomnia`, `TablePlus` 사용하여 로컬 환경에서 API 테스트 진행
+  - 결과  
+![GIFMaker_me (1)](https://github.com/dawwson/spring-core-study/assets/45624238/abc02993-cda7-45c0-8d06-57403aa9e4bc)
+
+
+
+
+
 
