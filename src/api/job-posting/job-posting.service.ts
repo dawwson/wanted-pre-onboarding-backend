@@ -2,13 +2,13 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { JobPosting } from '../../entity/job-posting.entity';
 import { JobPostingRepository } from '../../repository/job-posting.repository';
+import { JobApplicationRepository } from '../../repository/job-application.repository';
 
 import { PostJobPostingDto } from './controller-dto/post-job-posting.dto';
 import { PatchJobPostingDto } from './controller-dto/patch-job-posting.dto';
 import { UpdateResultDto } from './service-dto/update-result.dto';
 import { DeleteResultDto } from './service-dto/delete-result.dto';
 import { FindConditionDto } from './service-dto/find-condition.dto';
-import { JobApplicationRepository } from '../../repository/job-application.repository';
 
 @Injectable()
 export class JobPostingService {

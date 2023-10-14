@@ -1,50 +1,46 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { JobPostingRepository } from '../../../src/repository/job-posting.repository';
-import { CompanyRepository } from '../../../src/repository/company.repository';
+import { JobApplicationRepository } from '../../../src/repository/job-application.repository';
 
 import { PostJobPostingDto } from '../../../src/api/job-posting/controller-dto/post-job-posting.dto';
 import { JobPosting } from '../../../src/entity/job-posting.entity';
 
 import { JobPostingService } from '../../../src/api/job-posting/job-posting.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('JobPostingService', () => {
   let jobPostingService: JobPostingService;
   let jobPostingRepository: JobPostingRepository;
-  let companyRepository: CompanyRepository;
+  let jobApplicationRepository: JobApplicationRepository;
 
-  // Mock Repository
-  // DB 연결 없이 레파지토리와 독립적으로 service를 테스트하기 위함
   const mockJobPostingRepository = {
     save: jest.fn(),
   };
-  const mockCompanyRepository = {
-    findByManagerId: jest.fn(),
+
+  const mockJobApplicationRepository = {
+    findAppliedByJobPostingId: jest.fn(),
   };
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         JobPostingService,
-        // 모킹된 Repository를 제공
         {
-          provide: getRepositoryToken(JobPostingRepository),
+          provide: JobPostingRepository,
           useValue: mockJobPostingRepository,
         },
         {
-          provide: getRepositoryToken(CompanyRepository),
-          useValue: mockCompanyRepository,
+          provide: JobApplicationRepository,
+          useValue: mockJobApplicationRepository,
         },
       ],
     }).compile();
 
     jobPostingService = module.get(JobPostingService);
-    jobPostingRepository = module.get<JobPostingRepository>(
-      getRepositoryToken(JobPostingRepository),
-    );
-    companyRepository = module.get<CompanyRepository>(
-      getRepositoryToken(CompanyRepository),
+    jobPostingRepository =
+      module.get<JobPostingRepository>(JobPostingRepository);
+    jobApplicationRepository = module.get<JobApplicationRepository>(
+      JobApplicationRepository,
     );
   });
 
@@ -53,27 +49,31 @@ describe('JobPostingService', () => {
     expect(jobPostingRepository).toBeDefined();
   });
 
-  test('register() : 등록된 채용공고 엔티티를 반환한다.', async () => {
+  test('register() : 등록된 JobPosting을 반환한다.', async () => {
     // given
-    // 테스트 회원 id
     const testUserId: number = 1;
-    // 테스트 dto
+
     const testPostJobPostingDto: PostJobPostingDto = {
       jobPosition: '백엔드 개발자',
       description: '채용 서비스를 개발합니다!',
       reward: 1000000,
       skill: 'nodejs',
     };
-    const mockRepoValue = {
+
+    const mockJobPosting = {
       id: testUserId,
+      companyId: 1,
       jobPosition: '백엔드 개발자',
       description: '채용 서비스를 개발합니다!',
       reward: 1000000,
       skill: 'nodejs',
+      createdAt: new Date(),
+      updatedAt: new Date(),
     } as JobPosting;
 
-    // 의존성의 가짜 반환값 => 실제 DB에 접근하지 않도록 하기 위함.
-    jest.spyOn(jobPostingRepository, 'save').mockResolvedValue(mockRepoValue);
+    const saveSpy = jest
+      .spyOn(jobPostingRepository, 'save')
+      .mockResolvedValue(mockJobPosting);
 
     // when
     const result = await jobPostingService.register(
@@ -82,12 +82,60 @@ describe('JobPostingService', () => {
     );
 
     // then
-    expect(result).toHaveProperty('id');
-    expect(result).toHaveProperty('jobPosition');
-    expect(result).toHaveProperty('description');
-    expect(result).toHaveProperty('reward');
-    expect(result).toHaveProperty('skill');
-    expect(result).toHaveProperty('createdAt');
-    expect(result).toHaveProperty('updatedAt');
+    expect(saveSpy).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(mockJobPosting);
+  });
+
+  test('update() : 수정된 JobPosting의 수를 반환한다.', async () => {
+    // given
+    // when
+    // const result = await jobPostingService.update();
+    // then
+  });
+
+  test('remove() : 삭제된 JobPosting의 수를 반환한다.', async () => {
+    // given
+    // when
+    // const result = await jobPostingService.remove();
+    // then
+  });
+
+  describe('getAll()', () => {
+    test('검색 조건 없이 모든 JobPosting 객체 배열을 반환한다.', async () => {
+      // given
+      // when
+      // const result = await jobPostingService.getAll();
+      // then
+    });
+
+    test('검색 조건 포함 모든 JobPosting 객체 배열을 반환한다.', async () => {
+      // given
+      // when
+      // const result = await jobPostingService.getAll();
+      // then
+    });
+  });
+
+  describe('getOne()', () => {
+    test('getOne() : id에 해당하는 JobPosting 객체를 반환한다.', async () => {
+      // given
+      // when
+      // const result = await jobPostingService.getOne();
+      // then
+    });
+
+    test('getOne() : JobPosting이 없으면 에러가 발생한다.', async () => {
+      // given
+      // when
+      // const result = await jobPostingService.getOne();
+      // then
+    });
+  });
+
+  test('getAllOfCompany() : id에 해당하는 JobPosting 객체를 반환한다.', async () => {
+    // given
+    // when
+    // const result = await jobPostingService.getAll();
+    // then
   });
 });
