@@ -1,15 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 import { RequestWithUser } from '../../../src/common/interface/request.interface';
 
 import { Company } from '../../../src/entity/company.entity';
 import { JobPosting } from '../../../src/entity/job-posting.entity';
-
-import { CompanyRepository } from '../../../src/repository/company.repository';
-import { UserRepository } from '../../../src/repository/user.repository';
-import { JobPostingRepository } from '../../../src/repository/job-posting.repository';
 
 import { UserService } from '../../../src/api/user/user.service';
 
@@ -50,18 +44,6 @@ describe('JobPostingController', () => {
           provide: UserService,
           useValue: mockUserService,
         },
-        {
-          provide: getRepositoryToken(JobPostingRepository),
-          useClass: Repository,
-        },
-        {
-          provide: getRepositoryToken(CompanyRepository),
-          useClass: Repository,
-        },
-        {
-          provide: getRepositoryToken(UserRepository),
-          useClass: Repository,
-        },
       ],
     }).compile();
 
@@ -82,7 +64,7 @@ describe('JobPostingController', () => {
 
     // 2. 테스트 Request 객체
     const testRequest = {
-      user: { id: 1 },
+      user: { id: 1, company: Promise.resolve({ id: 1 }) },
     } as RequestWithUser;
 
     // 3. 테스트 요청 DTO 객체
