@@ -12,12 +12,18 @@
 ### 실행 방법
 #### 1. 테스트 데이터 생성
 ```
+// 테이블 데이터 초기화 후 데이터 새로 생성
 npm run seed
 ```
 #### 2. 개발 버전 서버 실행
 ```
 npm run start:dev
 ```
+#### 3. 테스트 전체 실행
+```
+npm run test
+```
+
 
 ## 🛠️ 기술 스택
 - Node v18
@@ -55,11 +61,17 @@ Test : 테스트 코드 추가 및 수정
   - [X] 해당 회사가 올린 다른 채용공고 포함 ~~(선택사항 & 가산점)~~
 - [X] 채용공고 지원 `일반회원 only` ~~(선택사항 & 가산점)~~
 #### 2. 도메인 모델 설계
+> 추가적으로 설정한 요구사항은 ➕ 표시
+- 회원은 기업회원/개인회원으로 나뉜다.
 - 기업회원은 여러 개의 채용 공고를 등록할 수 있다.
 - 기업회원은 등록한 채용공고를 수정, 삭제할 수 있다.
 - 모든 회원은 채용공고 조회, 검색할 수 있다.
 - 개인회원은 여러 채용공고에 지원할 수 있다.
-- 회사는 한명의 기업회원을 가진다.(추가한 가정)
+- ➕ 회사는 한명의 기업회원을 가진다.
+- ➕ 기업회원은 본인 회사의 채용공고만 등록, 수정, 삭제할 수 있다.
+- ➕ 합격/불합격 처리되지 않은 지원내역이 있는 채용공고를 삭제하면 지원내역은 자동으로 불합격 처리된다.
+- ➕ 기업 회원은 채용공고의 채용 포지션, 채용 내용, 채용 보상금, 사용 기술을 수정할 수 있다.
+- ➕ 채용공고는 회사 이름, 사용 기술로 검색할 수 있다.
 
 ## 📝 ERD 설계(작성중...)
 
@@ -163,6 +175,7 @@ Content-Type: application/json
 
 ### 2. 채용공고 수정 
 - 채용 공고를 수정한다. `기업회원 only`
+- **채용 포지션, 채용 내용, 채용 보상금, 사용 기술** 수정 가능
 
 **Request URL**
 - `Authorization` 헤더에 회원 `DB Id`를 담아서 보낸다.
@@ -405,10 +418,46 @@ Content-Type: application/json
 ---
 
 ## 코드 아키텍처 설계
+### 폴더 구조
+```
+src
+├── api  # API 관련 코드
+│   ├── job-application
+│   │   ├── controller-dto
+│   │   ├── job-application.controller.ts
+│   │   ├── job-application.module.ts
+│   │   └── job-application.service.ts
+│   ├── job-posting
+│   │   ├── controller-dto  # controller 레이어에서 쓰는 DTO
+│   │   ├── service-dto     # service 레이어에서 쓰는 DTO
+│   │   ├── job-posting.controller.ts
+│   │   ├── job-posting.module.ts
+│   │   └── job-posting.service.ts
+│   └── user
+│       ├── user.module.ts
+│       └── user.service.ts
+├── common  # 전역적으로 사용하는 모듈들
+│   ├── guard
+│   ├── interface
+│   └── middleware
+├── config  # 서버, 데이터베이스 설정 관련
+│   ├── db.config.ts
+│   └── server.config.ts
+├── database  # 초기 데이터 설정 관련
+│   ├── data-source.ts
+│   └── seeds
+│       └── test-data.seeder.ts
+├── entity  # 엔티티
+├── repository  # repository 레이어
+├── app.controller.ts
+├── app.module.ts
+└── main.ts  # 진입점
 
+test
+└── unit  # 단위 테스트
+    ├── controller
+    ├── repository
+    └── service
+```
 
-## 테스트
-
-
-|Name|Type|Description|Required|  
-|--|:--:|--|:--:|  
+## 테스트 결과
