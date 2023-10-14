@@ -18,10 +18,6 @@ export class JobPostingRepository extends Repository<JobPosting> {
 
   findWithCompanyBySearch(search: string): Promise<JobPosting[]> {
     return this.find({
-      // SELECT company.id, company.name, company.country, company.region
-      select: {
-        company: { id: true, name: true, country: true, region: true },
-      },
       // LEFT JOIN company ON company.id = job_posting.company_id
       relations: { company: true },
       // WHERE (company.name ILIKE '%:search%') OR (company.skill ILIKE '%:search%')
@@ -35,10 +31,6 @@ export class JobPostingRepository extends Repository<JobPosting> {
 
   findWithCompanyById(id: number): Promise<JobPosting> {
     return this.findOne({
-      // SELECT company.id, company.name, company.country, company.region
-      select: {
-        company: { id: true, name: true, country: true, region: true },
-      },
       // LEFT JOIN company ON company.id = job_posting.company_id
       relations: { company: true },
       // WHERE job_posting_id IN (:id) <- equal(=)이 안 됨
