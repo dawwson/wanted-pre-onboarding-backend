@@ -186,7 +186,7 @@ describe('JobPostingController', () => {
       .mockResolvedValue([
         {
           id: 1,
-          __company__: {
+          company: {
             id: 1,
             name: '원티드',
             country: '한국',
@@ -198,7 +198,7 @@ describe('JobPostingController', () => {
         },
         {
           id: 2,
-          __company__: {
+          company: {
             id: 1,
             name: '투티드',
             country: '한국',
@@ -240,7 +240,7 @@ describe('JobPostingController', () => {
       .mockResolvedValue([
         {
           id: 1,
-          __company__: {
+          company: {
             id: 1,
             name: '원티드',
             country: '한국',
@@ -252,7 +252,7 @@ describe('JobPostingController', () => {
         },
         {
           id: 2,
-          __company__: {
+          company: {
             id: 1,
             name: '원티드',
             country: '한국',
@@ -297,7 +297,7 @@ describe('JobPostingController', () => {
       .spyOn(jobPostingService, 'getOne')
       .mockResolvedValue({
         id: 1,
-        __company__: {
+        company: {
           id: 1,
           name: '원티드',
           country: '한국',
