@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { JobPosting } from '../../entity/job-posting.entity';
 import { JobPostingRepository } from '../../repository/job-posting.repository';
@@ -57,8 +57,14 @@ export class JobPostingService {
     return this.jobPostingRepository.findWithCompanyBySearch(search);
   }
 
-  getOne(id: number): Promise<JobPosting> {
-    return this.jobPostingRepository.findWithCompanyById(id);
+  async getOne(id: number): Promise<JobPosting> {
+    const jobPosting = await this.jobPostingRepository.findWithCompanyById(id);
+
+    if (!jobPosting) {
+      throw new NotFoundException('채용공고가 존재하지 않습니다.');
+    }
+
+    return jobPosting;
   }
 
   getAllOfCompany(companyId: number): Promise<JobPosting[]> {
